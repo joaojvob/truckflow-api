@@ -3,7 +3,10 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DriverProfileController;
 use App\Http\Controllers\Api\FreightController;
+use App\Http\Controllers\Api\FreightWorkflowController;
 use App\Http\Controllers\Api\IncidentController;
+use App\Http\Controllers\Api\ManagerDriverController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\TenantController;
 use App\Http\Controllers\Api\TrailerController;
 use App\Http\Controllers\Api\TruckController;
@@ -39,13 +42,35 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // Fretes — CRUD
     Route::apiResource('freights', FreightController::class);
-    Route::post('/freights/{freight}/start', [FreightController::class, 'start']);
-    Route::post('/freights/{freight}/complete', [FreightController::class, 'complete']);
     Route::post('/freights/{freight}/cancel', [FreightController::class, 'cancel']);
+
+    // Fretes — Workflow (gestor↔motorista)
+    Route::prefix('freights/{freight}')->group(function () {
+        Route::post('/assign', [FreightWorkflowController::class, 'assign']);
+        Route::post('/accept', [FreightWorkflowController::class, 'accept']);
+        Route::post('/reject', [FreightWorkflowController::class, 'reject']);
+        Route::post('/doping', [FreightWorkflowController::class, 'submitDoping']);
+        Route::post('/doping/{dopingTest}/review', [FreightWorkflowController::class, 'reviewDoping']);
+        Route::post('/checklist', [FreightWorkflowController::class, 'submitChecklist']);
+        Route::post('/approve', [FreightWorkflowController::class, 'approve']);
+        Route::post('/start', [FreightWorkflowController::class, 'start']);
+        Route::post('/complete', [FreightWorkflowController::class, 'complete']);
+    });
 
     // Incidentes / SOS
     Route::post('/freights/{freight}/sos', [IncidentController::class, 'triggerSos']);
     Route::post('/freights/{freight}/incidents', [IncidentController::class, 'store']);
+
+    // Gestão Gestor ↔ Motorista
+    Route::get('/manager/drivers', [ManagerDriverController::class, 'index']);
+    Route::post('/manager/drivers', [ManagerDriverController::class, 'store']);
+    Route::delete('/manager/drivers/{driver}', [ManagerDriverController::class, 'destroy']);
+
+    // Notificações
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/unread', [NotificationController::class, 'unread']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
 
     // Caminhões — CRUD
     Route::apiResource('trucks', TruckController::class);
