@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('cargo_name');
             $table->decimal('weight', 8, 2);
             
-            $table->enum('status', ['pending', 'ready', 'in_transit', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'assigned', 'accepted', 'ready', 'in_transit', 'completed', 'cancelled', 'rejected'])->default('pending');
             
             $table->geography('origin', 'point', 4326);
             $table->geography('destination', 'point', 4326);
