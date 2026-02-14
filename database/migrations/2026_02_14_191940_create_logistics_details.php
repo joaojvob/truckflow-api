@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('checklists', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('job_id')->constrained();
+        $table->foreignId('freight_id')->constrained();
         $table->json('items'); // Ex: {"pneus": true, "oleo": true, "luzes": false}
         $table->timestamps();
     });
 
     Schema::create('incidents', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('job_id')->constrained();
+        $table->foreignId('freight_id')->constrained();
         $table->enum('type', ['breakdown', 'accident', 'robbery', 'sos']); // O botão de SOS
         $table->text('description')->nullable();
         $table->geography('location', 'point', 4326); // Onde aconteceu
