@@ -19,10 +19,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
 
     // Fretes
-    Route::post('/freights/{id}/start', [FreightController::class, 'start']);
-    Route::post('/freights/{id}/complete', [FreightController::class, 'complete']);
+    Route::post('/freights/{freight}/start', [FreightController::class, 'start']);
+    Route::post('/freights/{freight}/complete', [FreightController::class, 'complete']);
 
     // Incidentes / SOS
-    Route::post('/freights/{id}/sos', [IncidentController::class, 'triggerSos']);
-    Route::post('/freights/{id}/incidents', [IncidentController::class, 'store']);
+    Route::post('/freights/{freight}/sos', [IncidentController::class, 'triggerSos']);
+    Route::post('/freights/{freight}/incidents', [IncidentController::class, 'store']);
 });
