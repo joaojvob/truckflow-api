@@ -52,7 +52,7 @@ class FreightController extends Controller
     {
         $this->authorize('view', $freight);
 
-        $freight->load(['driver', 'truck', 'trailer', 'creator', 'checklists', 'incidents', 'dopingTests']);
+        $freight->load(['driver', 'truck', 'trailer', 'creator', 'checklists', 'incidents', 'dopingTests', 'waypoints']);
 
         return response()->json([
             'data' => FreightResource::make($freight),

@@ -46,6 +46,8 @@ class UpdateFreightRequest extends FormRequest
             'fuel_cost'              => ['nullable', 'numeric', 'min:0'],
 
             'deadline_at'            => ['nullable', 'date', 'after:now'],
+
+            'enforce_route'          => ['sometimes', 'boolean'],
         ];
     }
 }

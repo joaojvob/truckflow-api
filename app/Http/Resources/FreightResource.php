@@ -42,6 +42,7 @@ class FreightResource extends JsonResource
             // Endereços
             'origin_address'          => $this->origin_address,
             'destination_address'     => $this->destination_address,
+            'enforce_route'           => $this->enforce_route,
 
             // Distância e tempo
             'distance_km'             => $this->distance_km,
@@ -73,6 +74,7 @@ class FreightResource extends JsonResource
             'checklists'              => ChecklistResource::collection($this->whenLoaded('checklists')),
             'incidents'               => IncidentResource::collection($this->whenLoaded('incidents')),
             'doping_tests'            => $this->whenLoaded('dopingTests'),
+            'waypoints'               => WaypointResource::collection($this->whenLoaded('waypoints')),
         ];
     }
 }

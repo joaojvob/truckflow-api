@@ -69,6 +69,7 @@ class FreightFactory extends Factory
             'checklist_completed' => false,
             'doping_approved'     => false,
             'manager_approved'    => false,
+            'enforce_route'       => false,
             'driver_rating'       => null,
             'driver_notes'        => null,
             'started_at'          => null,

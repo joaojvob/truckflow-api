@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\TenantController;
 use App\Http\Controllers\Api\TrailerController;
 use App\Http\Controllers\Api\TruckController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\WaypointController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Rotas Públicas (sem autenticação) ───────────────────────
@@ -60,6 +61,18 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Incidentes / SOS
     Route::post('/freights/{freight}/sos', [IncidentController::class, 'triggerSos']);
     Route::post('/freights/{freight}/incidents', [IncidentController::class, 'store']);
+
+    // Waypoints (pontos de parada na rota)
+    Route::prefix('freights/{freight}/waypoints')->group(function () {
+        Route::get('/', [WaypointController::class, 'index']);
+        Route::post('/', [WaypointController::class, 'store']);
+        Route::get('/{waypoint}', [WaypointController::class, 'show']);
+        Route::put('/{waypoint}', [WaypointController::class, 'update']);
+        Route::delete('/{waypoint}', [WaypointController::class, 'destroy']);
+        Route::post('/{waypoint}/checkin', [WaypointController::class, 'checkin']);
+        Route::post('/{waypoint}/checkout', [WaypointController::class, 'checkout']);
+        Route::post('/reorder', [WaypointController::class, 'reorder']);
+    });
 
     // Gestão Gestor ↔ Motorista
     Route::get('/manager/drivers', [ManagerDriverController::class, 'index']);

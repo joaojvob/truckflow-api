@@ -6,9 +6,14 @@ use App\Enums\FreightStatus;
 use App\Models\Freight;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Services\WaypointService;
 
 class FreightManagementService
 {
+    public function __construct(
+        protected WaypointService $waypointService,
+    ) {}
+
     /**
      * Cria um novo frete com cálculo automático de preço.
      */
@@ -46,12 +51,18 @@ class FreightManagementService
                 'fuel_cost'              => $data['fuel_cost'] ?? 0,
                 'deadline_at'            => $data['deadline_at'] ?? null,
                 'created_by'             => auth()->id(),
+                'enforce_route'          => $data['enforce_route'] ?? false,
             ]);
 
             // Calcular preço total automaticamente
             $freight->update([
                 'total_price' => $freight->calculateTotalPrice(),
             ]);
+
+            // Criar waypoints se enviados inline
+            if (! empty($data['waypoints'])) {
+                $this->waypointService->createBatch($freight, $data['waypoints']);
+            }
 
             $freight->recordActivity(
                 action: 'freight_created',
@@ -63,7 +74,7 @@ class FreightManagementService
                 ],
             );
 
-            return $freight->fresh(['driver', 'truck', 'trailer', 'creator']);
+            return $freight->fresh(['driver', 'truck', 'trailer', 'creator', 'waypoints']);
         });
     }
 
