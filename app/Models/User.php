@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -66,6 +67,24 @@ class User extends Authenticatable
     public function trailers(): HasMany
     {
         return $this->hasMany(Trailer::class, 'driver_id');
+    }
+
+    /**
+     * Motoristas vinculados a este gestor.
+     */
+    public function drivers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'manager_driver', 'manager_id', 'driver_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Gestores vinculados a este motorista.
+     */
+    public function managers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'manager_driver', 'driver_id', 'manager_id')
+            ->withTimestamps();
     }
 
     public function isDriver(): bool

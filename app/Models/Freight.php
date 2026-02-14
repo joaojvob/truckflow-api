@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DriverResponse;
 use App\Enums\FreightStatus;
 use App\Enums\TrailerType;
 use App\Traits\BelongsToTenant;
@@ -40,7 +41,14 @@ class Freight extends Model
         'toll_cost',
         'fuel_cost',
         'total_price',
+        'driver_response',
+        'rejection_reason',
+        'driver_responded_at',
         'checklist_completed',
+        'doping_approved',
+        'manager_approved',
+        'approved_by',
+        'approved_at',
         'driver_rating',
         'driver_notes',
         'started_at',
@@ -65,9 +73,14 @@ class Freight extends Model
             'toll_cost'              => 'decimal:2',
             'fuel_cost'              => 'decimal:2',
             'total_price'            => 'decimal:2',
+            'driver_response'        => DriverResponse::class,
+            'doping_approved'        => 'boolean',
+            'manager_approved'       => 'boolean',
             'started_at'             => 'datetime',
             'completed_at'           => 'datetime',
             'deadline_at'            => 'datetime',
+            'driver_responded_at'    => 'datetime',
+            'approved_at'            => 'datetime',
         ];
     }
 
@@ -101,6 +114,32 @@ class Freight extends Model
     public function incidents(): HasMany
     {
         return $this->hasMany(Incident::class);
+    }
+
+    public function dopingTests(): HasMany
+    {
+        return $this->hasMany(DopingTest::class);
+    }
+
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    // ─── Workflow Helpers ─────────────────────────────────
+
+    public function isReadyToStart(): bool
+    {
+        return $this->status === FreightStatus::Ready
+            && $this->manager_approved
+            && $this->doping_approved
+            && $this->checklist_completed;
+    }
+
+    public function isWaitingDriverResponse(): bool
+    {
+        return $this->status === FreightStatus::Assigned
+            && $this->driver_response === DriverResponse::Pending;
     }
 
     // ─── Helpers ──────────────────────────────────────────────
