@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Enums\UserRole;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -32,10 +33,10 @@ class AuthenticationTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertStatus(200)
-            ->assertJsonPath('status', 'Success')
+        $response->assertOk()
             ->assertJsonStructure([
-                'data' => ['user', 'token'],
+                'user' => ['id', 'name', 'email', 'role', 'role_label'],
+                'token',
             ]);
     }
 
@@ -52,7 +53,7 @@ class AuthenticationTest extends TestCase
             'password' => 'wrong-password',
         ]);
 
-        $response->assertStatus(422);
+        $response->assertUnprocessable();
     }
 
     public function test_user_can_register(): void
@@ -66,15 +67,15 @@ class AuthenticationTest extends TestCase
             'role'                  => 'driver',
         ]);
 
-        $response->assertStatus(201)
-            ->assertJsonPath('status', 'Success')
+        $response->assertCreated()
             ->assertJsonStructure([
-                'data' => ['user', 'token'],
+                'user' => ['id', 'name', 'email', 'role', 'role_label'],
+                'token',
             ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'novo@test.com',
-            'role'  => 'driver',
+            'role'  => UserRole::Driver->value,
         ]);
     }
 
@@ -89,9 +90,8 @@ class AuthenticationTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer $token")
             ->postJson('/api/v1/logout');
 
-        $response->assertStatus(200);
+        $response->assertOk();
 
-        // Token foi revogado
         $this->assertDatabaseCount('personal_access_tokens', 0);
     }
 
@@ -106,7 +106,7 @@ class AuthenticationTest extends TestCase
         $response = $this->withHeader('Authorization', "Bearer $token")
             ->getJson('/api/v1/me');
 
-        $response->assertStatus(200)
+        $response->assertOk()
             ->assertJsonPath('data.id', $user->id)
             ->assertJsonPath('data.tenant.id', $this->tenant->id);
     }
@@ -115,6 +115,6 @@ class AuthenticationTest extends TestCase
     {
         $response = $this->getJson('/api/v1/me');
 
-        $response->assertStatus(401);
+        $response->assertUnauthorized();
     }
 }

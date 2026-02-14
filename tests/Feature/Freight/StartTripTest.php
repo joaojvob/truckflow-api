@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Freight;
 
+use App\Enums\FreightStatus;
 use App\Models\Freight;
 use App\Models\Tenant;
 use App\Models\User;
@@ -21,9 +22,8 @@ class StartTripTest extends TestCase
         parent::setUp();
 
         $this->tenant = Tenant::factory()->create();
-        $this->driver = User::factory()->create([
+        $this->driver = User::factory()->driver()->create([
             'tenant_id' => $this->tenant->id,
-            'role'      => 'driver',
         ]);
     }
 
@@ -34,7 +34,7 @@ class StartTripTest extends TestCase
         $freight = Freight::factory()->create([
             'tenant_id' => $this->tenant->id,
             'driver_id' => $this->driver->id,
-            'status'    => 'pending',
+            'status'    => FreightStatus::Pending,
         ]);
 
         $payload = [
@@ -48,12 +48,13 @@ class StartTripTest extends TestCase
 
         $response = $this->postJson("/api/v1/freights/{$freight->id}/start", $payload);
 
-        $response->assertStatus(200)
-            ->assertJsonPath('status', 'Success');
+        $response->assertOk()
+            ->assertJsonPath('data.status', FreightStatus::InTransit->value)
+            ->assertJsonPath('message', 'Viagem iniciada com sucesso!');
 
         $this->assertDatabaseHas('freights', [
             'id'     => $freight->id,
-            'status' => 'in_transit',
+            'status' => FreightStatus::InTransit->value,
         ]);
 
         $this->assertDatabaseHas('checklists', [
@@ -61,8 +62,8 @@ class StartTripTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('activity_logs', [
-            'action'        => 'trip_started',
-            'auditable_id'  => $freight->id,
+            'action'         => 'trip_started',
+            'auditable_id'   => $freight->id,
             'auditable_type' => Freight::class,
         ]);
     }
@@ -74,13 +75,13 @@ class StartTripTest extends TestCase
         $freight = Freight::factory()->create([
             'tenant_id' => $this->tenant->id,
             'driver_id' => $this->driver->id,
-            'status'    => 'pending',
+            'status'    => FreightStatus::Pending,
         ]);
 
         $payload = [
             'items' => [
                 'pneus'        => true,
-                'oleo'         => false, // Reprovado
+                'oleo'         => false,
                 'luzes'        => true,
                 'documentacao' => true,
             ],
@@ -88,11 +89,11 @@ class StartTripTest extends TestCase
 
         $response = $this->postJson("/api/v1/freights/{$freight->id}/start", $payload);
 
-        $response->assertStatus(422);
+        $response->assertUnprocessable();
 
         $this->assertDatabaseHas('freights', [
             'id'     => $freight->id,
-            'status' => 'pending', // Não mudou
+            'status' => FreightStatus::Pending->value,
         ]);
     }
 
@@ -116,14 +117,13 @@ class StartTripTest extends TestCase
 
         $response = $this->postJson("/api/v1/freights/{$freight->id}/start", $payload);
 
-        $response->assertStatus(422);
+        $response->assertUnprocessable();
     }
 
     public function test_admin_cannot_start_trip(): void
     {
-        $admin = User::factory()->create([
+        $admin = User::factory()->admin()->create([
             'tenant_id' => $this->tenant->id,
-            'role'      => 'admin',
         ]);
 
         Sanctum::actingAs($admin);
@@ -131,7 +131,7 @@ class StartTripTest extends TestCase
         $freight = Freight::factory()->create([
             'tenant_id' => $this->tenant->id,
             'driver_id' => $this->driver->id,
-            'status'    => 'pending',
+            'status'    => FreightStatus::Pending,
         ]);
 
         $payload = [
@@ -145,7 +145,7 @@ class StartTripTest extends TestCase
 
         $response = $this->postJson("/api/v1/freights/{$freight->id}/start", $payload);
 
-        $response->assertStatus(403); // Forbidden - não é motorista
+        $response->assertForbidden();
     }
 
     public function test_unauthenticated_user_cannot_start_trip(): void
@@ -153,13 +153,52 @@ class StartTripTest extends TestCase
         $freight = Freight::factory()->create([
             'tenant_id' => $this->tenant->id,
             'driver_id' => $this->driver->id,
-            'status'    => 'pending',
+            'status'    => FreightStatus::Pending,
         ]);
 
         $response = $this->postJson("/api/v1/freights/{$freight->id}/start", [
             'items' => ['pneus' => true, 'oleo' => true, 'luzes' => true, 'documentacao' => true],
         ]);
 
-        $response->assertStatus(401); // Não autenticado
+        $response->assertUnauthorized();
+    }
+
+    public function test_driver_can_complete_trip(): void
+    {
+        Sanctum::actingAs($this->driver);
+
+        $freight = Freight::factory()->inTransit()->create([
+            'tenant_id' => $this->tenant->id,
+            'driver_id' => $this->driver->id,
+        ]);
+
+        $response = $this->postJson("/api/v1/freights/{$freight->id}/complete", [
+            'rating' => 5,
+            'notes'  => 'Viagem tranquila.',
+        ]);
+
+        $response->assertOk()
+            ->assertJsonPath('data.status', FreightStatus::Completed->value)
+            ->assertJsonPath('message', 'Viagem finalizada com sucesso!');
+
+        $this->assertDatabaseHas('freights', [
+            'id'     => $freight->id,
+            'status' => FreightStatus::Completed->value,
+        ]);
+    }
+
+    public function test_driver_cannot_complete_pending_trip(): void
+    {
+        Sanctum::actingAs($this->driver);
+
+        $freight = Freight::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'driver_id' => $this->driver->id,
+            'status'    => FreightStatus::Pending,
+        ]);
+
+        $response = $this->postJson("/api/v1/freights/{$freight->id}/complete");
+
+        $response->assertUnprocessable();
     }
 }
