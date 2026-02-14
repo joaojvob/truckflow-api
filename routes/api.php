@@ -1,8 +1,13 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DriverProfileController;
 use App\Http\Controllers\Api\FreightController;
 use App\Http\Controllers\Api\IncidentController;
+use App\Http\Controllers\Api\TenantController;
+use App\Http\Controllers\Api\TrailerController;
+use App\Http\Controllers\Api\TruckController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Rotas Públicas (sem autenticação) ───────────────────────
@@ -18,11 +23,33 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
-    // Fretes
+    // Empresa (Tenant)
+    Route::post('/tenant', [TenantController::class, 'store']);
+    Route::get('/tenant', [TenantController::class, 'show']);
+    Route::put('/tenant', [TenantController::class, 'update']);
+
+    // Perfil do Motorista
+    Route::get('/driver-profile', [DriverProfileController::class, 'show']);
+    Route::put('/driver-profile', [DriverProfileController::class, 'update']);
+
+    // Usuários (gestão pelo admin/manager)
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::patch('/users/{user}/role', [UserController::class, 'updateRole']);
+
+    // Fretes — CRUD
+    Route::apiResource('freights', FreightController::class);
     Route::post('/freights/{freight}/start', [FreightController::class, 'start']);
     Route::post('/freights/{freight}/complete', [FreightController::class, 'complete']);
+    Route::post('/freights/{freight}/cancel', [FreightController::class, 'cancel']);
 
     // Incidentes / SOS
     Route::post('/freights/{freight}/sos', [IncidentController::class, 'triggerSos']);
     Route::post('/freights/{freight}/incidents', [IncidentController::class, 'store']);
+
+    // Caminhões — CRUD
+    Route::apiResource('trucks', TruckController::class);
+
+    // Reboques — CRUD
+    Route::apiResource('trailers', TrailerController::class);
 });
