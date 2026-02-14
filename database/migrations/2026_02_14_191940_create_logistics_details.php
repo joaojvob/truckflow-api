@@ -12,20 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('checklists', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('freight_id')->constrained();
-        $table->json('items'); // Ex: {"pneus": true, "oleo": true, "luzes": false}
-        $table->timestamps();
-    });
+            $table->id();
+            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('freight_id')->constrained()->onDelete('cascade');
+            $table->json('items'); // Ex: {"pneus": true, "oleo": true, "luzes": false}
+            $table->timestamps();
+        });
 
-    Schema::create('incidents', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('freight_id')->constrained();
-        $table->enum('type', ['breakdown', 'accident', 'robbery', 'sos']); // O botão de SOS
-        $table->text('description')->nullable();
-        $table->geography('location', 'point', 4326); // Onde aconteceu
-        $table->timestamps();
-    });
+        Schema::create('incidents', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('freight_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
+            $table->enum('type', ['breakdown', 'accident', 'robbery', 'sos']);
+            $table->text('description')->nullable();
+            $table->geography('location', 'point', 4326);
+            $table->timestamps();
+        });
     }
 
     /**

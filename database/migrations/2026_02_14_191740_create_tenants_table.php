@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('tenants', function (Blueprint $table) {
-        $table->id();
-        $table->string('name'); // Nome da Transportadora
-        $table->string('slug')->unique(); // Identificador na URL
-        $table->json('settings')->nullable(); // Configurações de fadiga, velocidade, etc.
-        $table->timestamps();
-    });
+            $table->id();
+            $table->string('name'); // Nome da Transportadora
+            $table->string('slug')->unique(); // Identificador na URL
+            $table->json('settings')->nullable(); // Configurações de fadiga, velocidade, etc.
+            $table->timestamps();
+        });
     }
 
     /**
