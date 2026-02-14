@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\DriverResponse;
 use App\Enums\FreightStatus;
 use App\Enums\TrailerType;
 use App\Models\Freight;
@@ -66,6 +67,8 @@ class FreightFactory extends Factory
             'total_price'      => ($pricePerKm * $distanceKm) + ($pricePerTon * $weight) + $tollCost + $fuelCost,
 
             'checklist_completed' => false,
+            'doping_approved'     => false,
+            'manager_approved'    => false,
             'driver_rating'       => null,
             'driver_notes'        => null,
             'started_at'          => null,
@@ -74,11 +77,55 @@ class FreightFactory extends Factory
         ];
     }
 
+    /**
+     * Frete atribuído a um motorista (aguardando resposta).
+     */
+    public function assigned(): static
+    {
+        return $this->state(fn () => [
+            'status'          => FreightStatus::Assigned,
+            'driver_response' => DriverResponse::Pending,
+        ]);
+    }
+
+    /**
+     * Frete aceito pelo motorista.
+     */
+    public function accepted(): static
+    {
+        return $this->state(fn () => [
+            'status'              => FreightStatus::Accepted,
+            'driver_response'     => DriverResponse::Accepted,
+            'driver_responded_at' => now(),
+        ]);
+    }
+
+    /**
+     * Frete pronto para iniciar (tudo aprovado).
+     */
+    public function ready(): static
+    {
+        return $this->state(fn () => [
+            'status'              => FreightStatus::Ready,
+            'driver_response'     => DriverResponse::Accepted,
+            'driver_responded_at' => now(),
+            'checklist_completed' => true,
+            'doping_approved'     => true,
+            'manager_approved'    => true,
+            'approved_at'         => now(),
+        ]);
+    }
+
     public function inTransit(): static
     {
         return $this->state(fn () => [
             'status'              => FreightStatus::InTransit,
+            'driver_response'     => DriverResponse::Accepted,
+            'driver_responded_at' => now(),
             'checklist_completed' => true,
+            'doping_approved'     => true,
+            'manager_approved'    => true,
+            'approved_at'         => now()->subHour(),
             'started_at'          => now(),
         ]);
     }
@@ -87,7 +134,12 @@ class FreightFactory extends Factory
     {
         return $this->state(fn () => [
             'status'              => FreightStatus::Completed,
+            'driver_response'     => DriverResponse::Accepted,
+            'driver_responded_at' => now()->subHours(6),
             'checklist_completed' => true,
+            'doping_approved'     => true,
+            'manager_approved'    => true,
+            'approved_at'         => now()->subHours(5),
             'started_at'          => now()->subHours(5),
             'completed_at'        => now(),
         ]);
