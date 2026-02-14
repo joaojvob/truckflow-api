@@ -25,6 +25,15 @@ class FreightResource extends JsonResource
             'status_label'            => $this->status->label(),
             'checklist_completed'     => $this->checklist_completed,
 
+            // Workflow
+            'driver_response'         => $this->driver_response,
+            'driver_response_label'   => $this->driver_response?->label(),
+            'rejection_reason'        => $this->rejection_reason,
+            'driver_responded_at'     => $this->driver_responded_at,
+            'doping_approved'         => $this->doping_approved,
+            'manager_approved'        => $this->manager_approved,
+            'approved_at'             => $this->approved_at,
+
             // Requisitos
             'required_trailer_type'   => $this->required_trailer_type,
             'required_trailer_label'  => $this->required_trailer_type?->label(),
@@ -58,10 +67,12 @@ class FreightResource extends JsonResource
             // Relacionamentos
             'driver'                  => UserResource::make($this->whenLoaded('driver')),
             'creator'                 => UserResource::make($this->whenLoaded('creator')),
+            'approver'                => UserResource::make($this->whenLoaded('approver')),
             'truck'                   => TruckResource::make($this->whenLoaded('truck')),
             'trailer'                 => TrailerResource::make($this->whenLoaded('trailer')),
             'checklists'              => ChecklistResource::collection($this->whenLoaded('checklists')),
             'incidents'               => IncidentResource::collection($this->whenLoaded('incidents')),
+            'doping_tests'            => $this->whenLoaded('dopingTests'),
         ];
     }
 }

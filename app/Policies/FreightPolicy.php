@@ -8,7 +8,10 @@ use App\Models\User;
 class FreightPolicy
 {
     /**
-     * Listar fretes — qualquer autenticado do tenant.
+     * Listar fretes:
+     * - Admin vê todos do tenant
+     * - Manager vê apenas os que ele criou (vinculados a ele)
+     * - Driver vê apenas os atribuídos a ele
      */
     public function viewAny(User $user): bool
     {
@@ -16,12 +19,19 @@ class FreightPolicy
     }
 
     /**
-     * Ver detalhes — motorista só vê o dele, gestor/admin vê todos do tenant.
+     * Ver detalhes:
+     * - Admin vê qualquer frete do tenant
+     * - Manager só vê fretes que ele criou
+     * - Driver só vê fretes atribuídos a ele
      */
     public function view(User $user, Freight $freight): bool
     {
-        if ($user->isAdmin() || $user->isManager()) {
+        if ($user->isAdmin()) {
             return true;
+        }
+
+        if ($user->isManager()) {
+            return $freight->created_by === $user->id;
         }
 
         return $freight->driver_id === $user->id;
@@ -36,11 +46,17 @@ class FreightPolicy
     }
 
     /**
-     * Atualizar frete — apenas admin e manager.
+     * Atualizar frete:
+     * - Admin pode atualizar qualquer frete
+     * - Manager só atualiza os que ele criou
      */
     public function update(User $user, Freight $freight): bool
     {
-        return $user->isAdmin() || $user->isManager();
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        return $user->isManager() && $freight->created_by === $user->id;
     }
 
     /**
@@ -49,6 +65,14 @@ class FreightPolicy
     public function delete(User $user, Freight $freight): bool
     {
         return $user->isAdmin();
+    }
+
+    /**
+     * Motorista responde (aceitar/recusar), envia doping ou checklist.
+     */
+    public function respond(User $user, Freight $freight): bool
+    {
+        return $user->isDriver() && $freight->driver_id === $user->id;
     }
 
     /**
