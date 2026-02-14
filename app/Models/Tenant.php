@@ -20,4 +20,19 @@ class Tenant extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function freights(): HasMany
+    {
+        return $this->hasMany(Freight::class);
+    }
+
+    public function trucks(): HasMany
+    {
+        return $this->hasMany(Truck::class);
+    }
+
+    public function trailers(): HasMany
+    {
+        return $this->hasMany(Trailer::class);
+    }
 }
