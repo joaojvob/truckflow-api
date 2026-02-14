@@ -48,6 +48,26 @@ class User extends Authenticatable
         return $this->hasMany(Freight::class, 'driver_id');
     }
 
+    public function managedFreights(): HasMany
+    {
+        return $this->hasMany(Freight::class, 'created_by');
+    }
+
+    public function driverProfile(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(DriverProfile::class);
+    }
+
+    public function trucks(): HasMany
+    {
+        return $this->hasMany(Truck::class, 'driver_id');
+    }
+
+    public function trailers(): HasMany
+    {
+        return $this->hasMany(Trailer::class, 'driver_id');
+    }
+
     public function isDriver(): bool
     {
         return $this->role === UserRole::Driver;
