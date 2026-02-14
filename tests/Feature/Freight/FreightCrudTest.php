@@ -46,18 +46,52 @@ class FreightCrudTest extends TestCase
             ->assertJsonCount(3, 'data');
     }
 
-    public function test_driver_can_list_freights(): void
+    public function test_manager_only_sees_own_freights(): void
+    {
+        Sanctum::actingAs($this->manager);
+
+        // Fretes criados por este gestor
+        Freight::factory(2)->create([
+            'tenant_id'  => $this->tenant->id,
+            'driver_id'  => $this->driver->id,
+            'created_by' => $this->manager->id,
+        ]);
+
+        // Frete criado por outro gestor (não deve aparecer)
+        $otherManager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);
+        Freight::factory()->create([
+            'tenant_id'  => $this->tenant->id,
+            'driver_id'  => $this->driver->id,
+            'created_by' => $otherManager->id,
+        ]);
+
+        $response = $this->getJson('/api/v1/freights');
+
+        $response->assertOk()
+            ->assertJsonCount(2, 'data');
+    }
+
+    public function test_driver_only_sees_own_freights(): void
     {
         Sanctum::actingAs($this->driver);
 
+        // Fretes atribuídos a este driver
         Freight::factory(2)->create([
             'tenant_id' => $this->tenant->id,
             'driver_id' => $this->driver->id,
         ]);
 
+        // Frete de outro driver (não deve aparecer)
+        $otherDriver = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
+        Freight::factory()->create([
+            'tenant_id' => $this->tenant->id,
+            'driver_id' => $otherDriver->id,
+        ]);
+
         $response = $this->getJson('/api/v1/freights');
 
-        $response->assertOk();
+        $response->assertOk()
+            ->assertJsonCount(2, 'data');
     }
 
     // ─── Store ────────────────────────────────────────────────
@@ -142,8 +176,9 @@ class FreightCrudTest extends TestCase
         Sanctum::actingAs($this->manager);
 
         $freight = Freight::factory()->create([
-            'tenant_id' => $this->tenant->id,
-            'driver_id' => $this->driver->id,
+            'tenant_id'  => $this->tenant->id,
+            'driver_id'  => $this->driver->id,
+            'created_by' => $this->manager->id,
         ]);
 
         $response = $this->putJson("/api/v1/freights/{$freight->id}", [
@@ -161,8 +196,9 @@ class FreightCrudTest extends TestCase
         Sanctum::actingAs($this->manager);
 
         $freight = Freight::factory()->completed()->create([
-            'tenant_id' => $this->tenant->id,
-            'driver_id' => $this->driver->id,
+            'tenant_id'  => $this->tenant->id,
+            'driver_id'  => $this->driver->id,
+            'created_by' => $this->manager->id,
         ]);
 
         $response = $this->putJson("/api/v1/freights/{$freight->id}", [
@@ -196,8 +232,9 @@ class FreightCrudTest extends TestCase
         Sanctum::actingAs($this->manager);
 
         $freight = Freight::factory()->create([
-            'tenant_id' => $this->tenant->id,
-            'driver_id' => $this->driver->id,
+            'tenant_id'  => $this->tenant->id,
+            'driver_id'  => $this->driver->id,
+            'created_by' => $this->manager->id,
         ]);
 
         $response = $this->deleteJson("/api/v1/freights/{$freight->id}");
@@ -212,9 +249,10 @@ class FreightCrudTest extends TestCase
         Sanctum::actingAs($this->manager);
 
         $freight = Freight::factory()->create([
-            'tenant_id' => $this->tenant->id,
-            'driver_id' => $this->driver->id,
-            'status'    => FreightStatus::Pending,
+            'tenant_id'  => $this->tenant->id,
+            'driver_id'  => $this->driver->id,
+            'created_by' => $this->manager->id,
+            'status'     => FreightStatus::Pending,
         ]);
 
         $response = $this->postJson("/api/v1/freights/{$freight->id}/cancel");
@@ -229,8 +267,9 @@ class FreightCrudTest extends TestCase
         Sanctum::actingAs($this->manager);
 
         $freight = Freight::factory()->completed()->create([
-            'tenant_id' => $this->tenant->id,
-            'driver_id' => $this->driver->id,
+            'tenant_id'  => $this->tenant->id,
+            'driver_id'  => $this->driver->id,
+            'created_by' => $this->manager->id,
         ]);
 
         $response = $this->postJson("/api/v1/freights/{$freight->id}/cancel");
