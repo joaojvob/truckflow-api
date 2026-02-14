@@ -52,6 +52,21 @@ class StoreFreightRequest extends FormRequest
 
             // Prazo
             'deadline_at'            => ['nullable', 'date', 'after:now'],
+
+            // Rota
+            'enforce_route'          => ['sometimes', 'boolean'],
+
+            // Waypoints (inline na criação)
+            'waypoints'                           => ['sometimes', 'array'],
+            'waypoints.*.name'                    => ['required', 'string', 'max:255'],
+            'waypoints.*.type'                    => ['required', 'string', 'in:fuel_stop,rest_stop,toll,delivery_point,weigh_station,custom'],
+            'waypoints.*.lat'                     => ['required', 'numeric', 'between:-90,90'],
+            'waypoints.*.lng'                     => ['required', 'numeric', 'between:-180,180'],
+            'waypoints.*.address'                 => ['nullable', 'string', 'max:500'],
+            'waypoints.*.mandatory'               => ['sometimes', 'boolean'],
+            'waypoints.*.order'                   => ['sometimes', 'integer', 'min:0'],
+            'waypoints.*.estimated_stop_minutes'   => ['nullable', 'integer', 'min:1', 'max:1440'],
+            'waypoints.*.description'             => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

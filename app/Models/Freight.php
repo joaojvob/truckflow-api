@@ -55,6 +55,7 @@ class Freight extends Model
         'completed_at',
         'deadline_at',
         'created_by',
+        'enforce_route',
     ];
 
     protected function casts(): array
@@ -76,6 +77,7 @@ class Freight extends Model
             'driver_response'        => DriverResponse::class,
             'doping_approved'        => 'boolean',
             'manager_approved'       => 'boolean',
+            'enforce_route'          => 'boolean',
             'started_at'             => 'datetime',
             'completed_at'           => 'datetime',
             'deadline_at'            => 'datetime',
@@ -119,6 +121,11 @@ class Freight extends Model
     public function dopingTests(): HasMany
     {
         return $this->hasMany(DopingTest::class);
+    }
+
+    public function waypoints(): HasMany
+    {
+        return $this->hasMany(Waypoint::class)->orderBy('order');
     }
 
     public function approver(): BelongsTo
