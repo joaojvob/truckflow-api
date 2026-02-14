@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\IncidentType;
 use App\Traits\BelongsToTenant;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,32 +22,25 @@ class Incident extends Model
         'location',
     ];
 
-    /**
-     * Tipos válidos de incidentes.
-     */
-    public const TYPES = ['breakdown', 'accident', 'robbery', 'sos'];
+    protected function casts(): array
+    {
+        return [
+            'type' => IncidentType::class,
+        ];
+    }
 
-    /**
-     * Relacionamento: O incidente pertence a um frete.
-     */
     public function freight(): BelongsTo
     {
         return $this->belongsTo(Freight::class);
     }
 
-    /**
-     * Relacionamento: Quem reportou o incidente.
-     */
     public function reporter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * Helper: verifica se é um SOS.
-     */
     public function isSos(): bool
     {
-        return $this->type === 'sos';
+        return $this->type === IncidentType::Sos;
     }
 }
