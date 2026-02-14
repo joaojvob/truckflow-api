@@ -3,21 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CompleteTripRequest;
-use App\Http\Requests\StartTripRequest;
 use App\Http\Requests\StoreFreightRequest;
 use App\Http\Requests\UpdateFreightRequest;
 use App\Http\Resources\FreightResource;
 use App\Models\Freight;
 use App\Services\FreightManagementService;
-use App\Services\FreightService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class FreightController extends Controller
 {
     public function __construct(
-        protected FreightService $freightService,
         protected FreightManagementService $managementService,
     ) {}
 
@@ -25,9 +21,19 @@ class FreightController extends Controller
     {
         $this->authorize('viewAny', Freight::class);
 
-        $freights = Freight::with(['driver', 'truck', 'trailer', 'creator'])
-            ->latest()
-            ->paginate(15);
+        $user = auth()->user();
+
+        $query = Freight::with(['driver', 'truck', 'trailer', 'creator']);
+
+        // Escopo por role: gestor só vê os fretes que criou
+        if ($user->isManager()) {
+            $query->where('created_by', $user->id);
+        } elseif ($user->isDriver()) {
+            $query->where('driver_id', $user->id);
+        }
+        // Admin vê tudo do tenant (já filtrado pelo BelongsToTenant)
+
+        $freights = $query->latest()->paginate(15);
 
         return FreightResource::collection($freights);
     }
@@ -46,7 +52,7 @@ class FreightController extends Controller
     {
         $this->authorize('view', $freight);
 
-        $freight->load(['driver', 'truck', 'trailer', 'creator', 'checklists', 'incidents']);
+        $freight->load(['driver', 'truck', 'trailer', 'creator', 'checklists', 'incidents', 'dopingTests']);
 
         return response()->json([
             'data' => FreightResource::make($freight),
@@ -83,30 +89,6 @@ class FreightController extends Controller
         return response()->json([
             'data'    => FreightResource::make($freight),
             'message' => 'Frete cancelado com sucesso!',
-        ]);
-    }
-
-    public function start(StartTripRequest $request, Freight $freight): JsonResponse
-    {
-        $freight = $this->freightService->startTrip($freight, $request->validated()['items']);
-
-        return response()->json([
-            'data'    => FreightResource::make($freight),
-            'message' => 'Viagem iniciada com sucesso!',
-        ]);
-    }
-
-    public function complete(CompleteTripRequest $request, Freight $freight): JsonResponse
-    {
-        $freight = $this->freightService->completeTrip(
-            $freight,
-            $request->validated('rating'),
-            $request->validated('notes'),
-        );
-
-        return response()->json([
-            'data'    => FreightResource::make($freight),
-            'message' => 'Viagem finalizada com sucesso!',
         ]);
     }
 }
