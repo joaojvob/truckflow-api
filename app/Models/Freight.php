@@ -6,6 +6,7 @@ use App\Enums\DriverResponse;
 use App\Enums\FreightStatus;
 use App\Enums\TrailerType;
 use App\Traits\BelongsToTenant;
+use App\Traits\ExtractsGeographyCoordinates;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Freight extends Model
 {
-    use HasFactory, BelongsToTenant, LogsActivity;
+    use HasFactory, BelongsToTenant, ExtractsGeographyCoordinates, LogsActivity;
 
     protected $fillable = [
         'tenant_id',
@@ -56,6 +57,10 @@ class Freight extends Model
         'deadline_at',
         'created_by',
         'enforce_route',
+        'route_polyline',
+        'route_distance_meters',
+        'route_duration_seconds',
+        'route_calculated_at',
     ];
 
     protected function casts(): array
@@ -78,6 +83,7 @@ class Freight extends Model
             'doping_approved'        => 'boolean',
             'manager_approved'       => 'boolean',
             'enforce_route'          => 'boolean',
+            'route_calculated_at'    => 'datetime',
             'started_at'             => 'datetime',
             'completed_at'           => 'datetime',
             'deadline_at'            => 'datetime',
@@ -173,5 +179,20 @@ class Freight extends Model
         }
 
         return $trailer->type === $this->required_trailer_type;
+    }
+
+    public function getOriginCoordinates(): ?array
+    {
+        return $this->coordinatesFromGeography('origin');
+    }
+
+    public function getDestinationCoordinates(): ?array
+    {
+        return $this->coordinatesFromGeography('destination');
+    }
+
+    public function hasCalculatedRoute(): bool
+    {
+        return $this->route_calculated_at !== null && $this->route_polyline !== null;
     }
 }

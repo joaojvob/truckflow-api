@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DriverProfileController;
 use App\Http\Controllers\Api\FreightController;
+use App\Http\Controllers\Api\FreightRouteController;
 use App\Http\Controllers\Api\FreightWorkflowController;
 use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\ManagerDriverController;
@@ -44,6 +45,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Fretes — CRUD
     Route::apiResource('freights', FreightController::class);
     Route::post('/freights/{freight}/cancel', [FreightController::class, 'cancel']);
+
+    // Fretes — Rota (Google Directions API)
+    Route::get('/freights/{freight}/route', [FreightRouteController::class, 'show']);
+    Route::post('/freights/{freight}/route', [FreightRouteController::class, 'calculate']);
 
     // Fretes — Workflow (gestor↔motorista)
     Route::prefix('freights/{freight}')->group(function () {

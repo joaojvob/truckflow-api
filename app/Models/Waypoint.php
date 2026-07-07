@@ -4,13 +4,14 @@ namespace App\Models;
 
 use App\Enums\WaypointType;
 use App\Traits\BelongsToTenant;
+use App\Traits\ExtractsGeographyCoordinates;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Waypoint extends Model
 {
-    use HasFactory, BelongsToTenant;
+    use HasFactory, BelongsToTenant, ExtractsGeographyCoordinates;
 
     protected $fillable = [
         'tenant_id',
@@ -72,5 +73,10 @@ class Waypoint extends Model
     public function markDeparture(): void
     {
         $this->update(['departed_at' => now()]);
+    }
+
+    public function getCoordinates(): ?array
+    {
+        return $this->coordinatesFromGeography('location');
     }
 }

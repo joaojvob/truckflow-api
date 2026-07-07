@@ -8,8 +8,8 @@ Backend SaaS multi-tenant construído com Laravel 12, PostgreSQL + PostGIS, proj
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql&logoColor=white)
 ![PostGIS](https://img.shields.io/badge/PostGIS-3.5-4E9A06)
-![Tests](https://img.shields.io/badge/Tests-73%20passed-brightgreen)
-![Assertions](https://img.shields.io/badge/Assertions-216-blue)
+![Tests](https://img.shields.io/badge/Tests-81%20passed-brightgreen)
+![Assertions](https://img.shields.io/badge/Assertions-243-blue)
 
 ---
 
@@ -350,7 +350,7 @@ O gestor pode definir **waypoints** (pontos de parada obrigatórios ou sugeridos
 - Visualiza se o motorista seguiu a rota definida
 - Mapa mostra os waypoints com ícones diferenciados por tipo (🛢️ posto, 🛏️ descanso, 🔄 pedágio)
 
-> ✅ **Status de implementação:** Waypoints, `enforce_route`, check-in/check-out e reorder já estão implementados na API. A integração com **Google Maps** (Directions/Places) permanece planejada para as próximas iterações (veja [Roadmap](#-roadmap)).
+> ✅ **Status de implementação:** Waypoints, `enforce_route`, check-in/check-out, reorder e cálculo de rota via **Google Directions API** já estão implementados na API. A integração com **Google Places API** permanece planejada (veja [Roadmap](#-roadmap)).
 
 ---
 
@@ -383,7 +383,7 @@ O sistema usa **Laravel Database Notifications** (tabela `notifications`) para c
 
 **Base URL:** `http://localhost/api/v1`  
 **Autenticação:** Bearer Token (Laravel Sanctum)  
-**Total de rotas:** 46
+**Total de rotas:** 56
 
 ### Autenticação
 
@@ -427,6 +427,15 @@ O sistema usa **Laravel Database Notifications** (tabela `notifications`) para c
 | `PUT` | `/freights/{freight}` | Atualizar frete | Admin / Manager (dono) |
 | `DELETE` | `/freights/{freight}` | Deletar frete | Admin |
 | `POST` | `/freights/{freight}/cancel` | Cancelar frete | Admin / Manager (dono) |
+
+### Fretes — Rota (Google Directions API)
+
+| Método | Rota | Descrição | Quem |
+|--------|------|-----------|------|
+| `GET` | `/freights/{freight}/route` | Ver rota calculada (polyline + distância) | Dono / Atribuído |
+| `POST` | `/freights/{freight}/route` | Calcular rota via Google Directions | Admin / Manager (dono) |
+
+> Requer `GOOGLE_MAPS_API_KEY` no `.env`. Use a [Google Maps Platform](https://developers.google.com/maps/documentation) — crédito gratuito de **US$ 200/mês** cobre bem o uso em desenvolvimento e aprendizado.
 
 ### Fretes — Workflow
 
@@ -621,8 +630,10 @@ app/
 ├── Services/                               # Lógica de negócio
 │   ├── DriverProfileService.php
 │   ├── FreightManagementService.php        # CRUD + cálculo de preço
+│   ├── FreightRouteService.php             # Cálculo de rota via Google Directions
 │   ├── FreightService.php
 │   ├── FreightWorkflowService.php          # Orquestração do workflow
+│   ├── GoogleMapsService.php               # Cliente da Google Directions API
 │   ├── TenantService.php
 │   ├── TrailerService.php
 │   ├── TruckService.php
@@ -641,6 +652,7 @@ tests/Feature/
 ├── Auth/AuthenticationTest.php             # 6 testes
 ├── DriverProfile/DriverProfileTest.php     # 4 testes
 ├── Freight/FreightCrudTest.php             # 12 testes
+├── Freight/FreightRouteTest.php            # 8 testes
 ├── Freight/FreightWorkflowTest.php         # 17 testes (inclui E2E)
 ├── Tenant/TenantTest.php                   # 5 testes
 ├── Trailer/TrailerCrudTest.php             # 6 testes
@@ -710,8 +722,8 @@ CACHE_STORE=redis
 SESSION_DRIVER=redis
 QUEUE_CONNECTION=redis
 
-# Google Maps (para integração futura)
-# GOOGLE_MAPS_API_KEY=sua-chave-aqui
+# Google Maps Platform (Directions API)
+GOOGLE_MAPS_API_KEY=sua-chave-aqui
 ```
 
 ### Usuários do Seed
@@ -746,8 +758,8 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 ### Resultado Atual
 
 ```
-✓ 73 testes passando (216 assertions)
-✓ Duração: ~9s
+✓ 81 testes passando (243 assertions)
+✓ Duração: ~5s
 ```
 
 | Suite | Testes | Descrição |
@@ -755,6 +767,7 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 | `AuthenticationTest` | 6 | Login, registro, logout, perfil |
 | `DriverProfileTest` | 4 | CRUD do perfil do motorista |
 | `FreightCrudTest` | 12 | CRUD de fretes + escopo por role |
+| `FreightRouteTest` | 8 | Cálculo de rota via Google Directions API |
 | `FreightWorkflowTest` | 17 | Workflow completo + teste E2E ponta-a-ponta |
 | `TenantTest` | 5 | CRUD da empresa |
 | `TrailerCrudTest` | 6 | CRUD de reboques |
@@ -788,13 +801,13 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 - [x] Incidentes e SOS durante a viagem
 - [x] Coordenadas geográficas com PostGIS (origem/destino como POINT)
 - [x] Waypoints e rotas — CRUD, `enforce_route`, check-in/check-out e reorder
-- [x] 73 testes automatizados (216 assertions, incluindo E2E)
+- [x] Integração Google Directions API — Cálculo de rota com waypoints e polyline
+- [x] 81 testes automatizados (243 assertions, incluindo E2E)
 - [x] Conventional Commits (52 commits)
 - [x] Documentação completa (README)
 
 ### 🔜 Próximas Iterações
 
-- [ ] **Integração Google Directions API** — Traçar rota com paradas intermediárias
 - [ ] **Integração Google Places API** — Buscar postos de combustível, restaurantes, pontos de descanso
 - [ ] **Tracking GPS em tempo real** — Posição do motorista atualizada periodicamente
 - [ ] **WebSocket / Pusher** — Notificações push em tempo real (web + app)

@@ -44,6 +44,14 @@ class FreightResource extends JsonResource
             'destination_address'     => $this->destination_address,
             'enforce_route'           => $this->enforce_route,
 
+            // Rota (Google Directions)
+            'route'                   => $this->when($this->hasCalculatedRoute(), fn () => [
+                'polyline'          => $this->route_polyline,
+                'distance_meters'   => $this->route_distance_meters,
+                'duration_seconds'  => $this->route_duration_seconds,
+                'calculated_at'     => $this->route_calculated_at,
+            ]),
+
             // Distância e tempo
             'distance_km'             => $this->distance_km,
             'estimated_hours'         => $this->estimated_hours,

@@ -90,4 +90,12 @@ class FreightPolicy
     {
         return $user->isDriver() && $freight->driver_id === $user->id;
     }
+
+    /**
+     * Calcular rota — admin e gestor responsável pelo frete.
+     */
+    public function calculateRoute(User $user, Freight $freight): bool
+    {
+        return $this->update($user, $freight);
+    }
 }
