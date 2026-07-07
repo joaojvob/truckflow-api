@@ -25,6 +25,22 @@ services:
             - pgsql
             - redis
             - mailpit
+    queue:
+        image: 'sail-8.5/app'
+        command: php artisan queue:work redis --sleep=3 --tries=3 --max-time=3600
+        restart: unless-stopped
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+        depends_on:
+            - pgsql
+            - redis
     pgsql:
         image: 'postgis/postgis:17-3.5' 
         ports:

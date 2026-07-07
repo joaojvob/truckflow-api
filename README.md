@@ -689,6 +689,7 @@ docker run --rm \
 | Serviço | URL | Descrição |
 |---------|-----|-----------|
 | **API** | http://localhost | Endpoints REST |
+| **Queue Worker** | container `queue` | Processa notificações e jobs via Redis |
 | **Mailpit** | http://localhost:8025 | Visualizar e-mails enviados |
 | **PostgreSQL** | localhost:5432 | Banco de dados |
 | **Redis** | localhost:6379 | Cache e filas |

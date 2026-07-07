@@ -4,11 +4,13 @@ namespace App\Notifications;
 
 use App\Models\Freight;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
+use Illuminate\Queue\SerializesModels;
 
-class FreightStatusChanged extends Notification
+class FreightStatusChanged extends Notification implements ShouldQueue
 {
-    use Queueable;
+    use Queueable, SerializesModels;
 
     public function __construct(
         protected Freight $freight,
