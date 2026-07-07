@@ -696,6 +696,33 @@ docker run --rm \
 ./vendor/bin/sail artisan migrate:fresh --seed
 ```
 
+### Deploy em Produção
+
+```bash
+# 1. Configurar .env para produção (APP_ENV=production, APP_DEBUG=false)
+cp .env.example .env
+
+# 2. Build e subir o stack de produção
+docker compose -f docker-compose.prod.yml up -d --build
+
+# 3. Migrações (primeira execução)
+docker compose -f docker-compose.prod.yml exec app php artisan migrate --force
+```
+
+| Serviço | Descrição |
+|---------|-----------|
+| `nginx` | Reverse proxy (porta 80) |
+| `app` | PHP 8.4-FPM (imagem multi-stage) |
+| `queue` | Worker Redis |
+| `pgsql` | PostgreSQL 17 + PostGIS |
+| `redis` | Cache, sessões e filas |
+
+> Desenvolvimento local usa `compose.yaml` (Sail). Produção usa `docker-compose.prod.yml`.
+
+### CI (GitHub Actions)
+
+Workflow em `.github/workflows/ci.yml` — roda testes com PostGIS em push/PR na `main`.
+
 ### Serviços Disponíveis
 
 | Serviço | URL | Descrição |
@@ -724,6 +751,9 @@ QUEUE_CONNECTION=redis
 
 # Google Maps Platform (Directions API)
 GOOGLE_MAPS_API_KEY=sua-chave-aqui
+
+# Rate limiting por tenant (requisições/minuto)
+API_RATE_LIMIT_PER_MINUTE=120
 ```
 
 ### Usuários do Seed
@@ -802,7 +832,10 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 - [x] Coordenadas geográficas com PostGIS (origem/destino como POINT)
 - [x] Waypoints e rotas — CRUD, `enforce_route`, check-in/check-out e reorder
 - [x] Integração Google Directions API — Cálculo de rota com waypoints e polyline
-- [x] 81 testes automatizados (243 assertions, incluindo E2E)
+- [x] CI com GitHub Actions (testes com PostGIS)
+- [x] Stack Docker de produção (Nginx + PHP-FPM + PostGIS + Redis + Queue)
+- [x] Rate limiting por tenant na API
+- [x] 83 testes automatizados (251 assertions, incluindo E2E)
 - [x] Conventional Commits (52 commits)
 - [x] Documentação completa (README)
 
@@ -816,7 +849,6 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 - [ ] **Dashboard com métricas** — Fretes ativos, receita, km rodados, tempo médio
 - [ ] **Exportar relatórios** — PDF e Excel
 - [ ] **Integração ANTT** — Consulta de habilitação e RNTRC
-- [ ] **Rate limiting por tenant** — Controle de uso da API
 - [ ] **API v2** — Versionamento e breaking changes
 
 ---
