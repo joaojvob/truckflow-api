@@ -4,13 +4,11 @@ namespace Tests\Feature\Tenant;
 
 use App\Models\Tenant;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class TenantTest extends TestCase
 {
-    use RefreshDatabase;
 
     public function test_user_without_tenant_can_create_company(): void
     {

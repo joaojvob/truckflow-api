@@ -9,13 +9,11 @@ use App\Models\SystemLog;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Services\SystemLogger;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AdminPanelTest extends TestCase
 {
-    use RefreshDatabase;
 
     protected Tenant $tenant;
 

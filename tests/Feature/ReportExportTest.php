@@ -5,13 +5,11 @@ namespace Tests\Feature;
 use App\Models\Freight;
 use App\Models\Tenant;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class ReportExportTest extends TestCase
 {
-    use RefreshDatabase;
 
     protected Tenant $tenant;
 

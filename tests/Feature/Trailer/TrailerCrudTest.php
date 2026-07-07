@@ -6,13 +6,11 @@ use App\Enums\TrailerType;
 use App\Models\Tenant;
 use App\Models\Trailer;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class TrailerCrudTest extends TestCase
 {
-    use RefreshDatabase;
 
     protected Tenant $tenant;
     protected User $admin;

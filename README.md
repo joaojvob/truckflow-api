@@ -8,8 +8,8 @@ Backend SaaS multi-tenant construído com Laravel 12 e PostgreSQL + PostGIS. **A
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql&logoColor=white)
 ![PostGIS](https://img.shields.io/badge/PostGIS-3.5-4E9A06)
-![Tests](https://img.shields.io/badge/Tests-90%20passed-brightgreen)
-![Assertions](https://img.shields.io/badge/Assertions-271-blue)
+![Tests](https://img.shields.io/badge/Tests-105%20passed-brightgreen)
+![Assertions](https://img.shields.io/badge/Assertions-305-blue)
 ![MVP](https://img.shields.io/badge/MVP%20Backend-Concluído-success)
 ![API v2](https://img.shields.io/badge/API%20v2-Concluído-success)
 
@@ -875,8 +875,13 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 
 ## 🧪 Testes
 
+Os testes de feature usam **`DatabaseTransactions`** no `TestCase` base: cada teste roda em transação e faz rollback ao final. O schema do banco `testing` precisa estar migrado **antes** da suite (não há `migrate:fresh` por teste).
+
 ```bash
-# Rodar todos os testes
+# 1. Garantir banco de testes migrado (após novas migrations)
+./vendor/bin/sail artisan migrate --env=testing --force
+
+# 2. Rodar todos os testes
 ./vendor/bin/sail artisan test
 
 # Com cobertura de código
@@ -889,22 +894,27 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 ./vendor/bin/sail artisan test --filter=test_complete_workflow_e2e
 ```
 
+> **CI:** o workflow em `.github/workflows/ci.yml` executa `php artisan migrate` antes de `php artisan test`.
+
 ### Resultado Atual
 
 ```
-✓ 90 testes passando (271 assertions)
+✓ 105 testes passando (305 assertions)
 ✓ Duração: ~6s
 ```
 
 | Suite | Testes | Descrição |
 |-------|--------|-----------|
 | `AuthenticationTest` | 6 | Login, registro, logout, perfil |
+| `AdminPanelTest` | 7 | Telemetria, system logs e painel admin |
 | `DriverProfileTest` | 4 | CRUD do perfil do motorista |
+| `DocumentUploadTest` | 5 | Upload CNH/CRLV |
 | `FreightCrudTest` | 12 | CRUD de fretes + escopo por role |
 | `FreightRouteTest` | 8 | Cálculo de rota via Google Directions API |
 | `FreightPlaceTest` | 1 | Busca de lugares via Google Places API |
 | `FreightTrackingTest` | 3 | Tracking GPS em tempo real |
 | `ReportTest` | 3 | Dashboard e relatório financeiro |
+| `ReportExportTest` | 3 | Exportação PDF/XLSX |
 | `FreightWorkflowTest` | 17 | Workflow completo + teste E2E ponta-a-ponta |
 | `TenantTest` | 5 | CRUD da empresa |
 | `TenantRateLimitTest` | 2 | Rate limit por tenant |

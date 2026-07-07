@@ -6,7 +6,6 @@ use App\Models\Freight;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Models\Waypoint;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
@@ -14,7 +13,6 @@ use Tests\TestCase;
 
 class FreightRouteTest extends TestCase
 {
-    use RefreshDatabase;
 
     protected Tenant $tenant;
 

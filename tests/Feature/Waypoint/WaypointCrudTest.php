@@ -8,13 +8,11 @@ use App\Models\Freight;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Models\Waypoint;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class WaypointCrudTest extends TestCase
 {
-    use RefreshDatabase;
 
     protected Tenant $tenant;
     protected User $admin;

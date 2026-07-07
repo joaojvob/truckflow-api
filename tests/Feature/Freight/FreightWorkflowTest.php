@@ -9,7 +9,6 @@ use App\Models\DopingTest;
 use App\Models\Freight;
 use App\Models\Tenant;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Notification;
@@ -19,7 +18,6 @@ use Tests\TestCase;
 
 class FreightWorkflowTest extends TestCase
 {
-    use RefreshDatabase;
 
     protected Tenant $tenant;
     protected User $manager;

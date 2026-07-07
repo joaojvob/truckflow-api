@@ -6,7 +6,6 @@ use App\Models\DriverProfile;
 use App\Models\Tenant;
 use App\Models\Truck;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
@@ -14,7 +13,6 @@ use Tests\TestCase;
 
 class DocumentUploadTest extends TestCase
 {
-    use RefreshDatabase;
 
     protected Tenant $tenant;
 

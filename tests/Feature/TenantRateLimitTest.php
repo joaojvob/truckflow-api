@@ -4,14 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Tenant;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\RateLimiter;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class TenantRateLimitTest extends TestCase
 {
-    use RefreshDatabase;
 
     public function test_api_requests_are_rate_limited_per_tenant(): void
     {
