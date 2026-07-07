@@ -8,8 +8,8 @@ Backend SaaS multi-tenant construído com Laravel 12, PostgreSQL + PostGIS, proj
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql&logoColor=white)
 ![PostGIS](https://img.shields.io/badge/PostGIS-3.5-4E9A06)
-![Tests](https://img.shields.io/badge/Tests-59%20passed-brightgreen)
-![Assertions](https://img.shields.io/badge/Assertions-175-blue)
+![Tests](https://img.shields.io/badge/Tests-73%20passed-brightgreen)
+![Assertions](https://img.shields.io/badge/Assertions-216-blue)
 
 ---
 
@@ -350,7 +350,7 @@ O gestor pode definir **waypoints** (pontos de parada obrigatórios ou sugeridos
 - Visualiza se o motorista seguiu a rota definida
 - Mapa mostra os waypoints com ícones diferenciados por tipo (🛢️ posto, 🛏️ descanso, 🔄 pedágio)
 
-> ⚠️ **Status de implementação:** A infraestrutura de coordenadas (PostGIS) já está implementada. Os campos `waypoints` e `enforce_route` e a integração com Google Maps são features planejadas para as próximas iterações (veja [Roadmap](#-roadmap)).
+> ✅ **Status de implementação:** Waypoints, `enforce_route`, check-in/check-out e reorder já estão implementados na API. A integração com **Google Maps** (Directions/Places) permanece planejada para as próximas iterações (veja [Roadmap](#-roadmap)).
 
 ---
 
@@ -576,7 +576,8 @@ app/
 │   ├── FreightStatus.php           # 8 estados + máquina de transição
 │   ├── TrailerType.php             # 10 tipos brasileiros
 │   ├── TruckStatus.php
-│   └── UserRole.php
+│   ├── UserRole.php
+│   └── WaypointType.php
 ├── Http/
 │   ├── Controllers/Api/
 │   │   ├── AuthController.php
@@ -589,8 +590,9 @@ app/
 │   │   ├── TenantController.php
 │   │   ├── TrailerController.php
 │   │   ├── TruckController.php
-│   │   └── UserController.php
-│   ├── Requests/                           # 15 Form Requests
+│   │   ├── UserController.php
+│   │   └── WaypointController.php          # CRUD + check-in/check-out de waypoints
+│   ├── Requests/                           # 17 Form Requests
 │   └── Resources/                          # API Resources
 ├── Models/
 │   ├── ActivityLog.php                     # Audit trail
@@ -601,7 +603,8 @@ app/
 │   ├── Tenant.php                          # Empresa
 │   ├── Trailer.php                         # Reboque
 │   ├── Truck.php                           # Caminhão
-│   └── User.php                            # Usuário (admin/manager/driver)
+│   ├── User.php                            # Usuário (admin/manager/driver)
+│   └── Waypoint.php                        # Ponto de parada na rota
 ├── Notifications/                          # 7 notificações do workflow
 │   ├── ChecklistSubmitted.php
 │   ├── DopingTestReviewed.php
@@ -613,7 +616,8 @@ app/
 ├── Policies/                               # Autorização granular por role
 │   ├── FreightPolicy.php
 │   ├── TrailerPolicy.php
-│   └── TruckPolicy.php
+│   ├── TruckPolicy.php
+│   └── WaypointPolicy.php
 ├── Services/                               # Lógica de negócio
 │   ├── DriverProfileService.php
 │   ├── FreightManagementService.php        # CRUD + cálculo de preço
@@ -621,25 +625,27 @@ app/
 │   ├── FreightWorkflowService.php          # Orquestração do workflow
 │   ├── TenantService.php
 │   ├── TrailerService.php
-│   └── TruckService.php
+│   ├── TruckService.php
+│   └── WaypointService.php                 # CRUD + reorder de waypoints
 └── Traits/
     ├── ApiResponser.php
     ├── BelongsToTenant.php                 # Multi-tenancy (Global Scope)
     └── LogsActivity.php                    # Audit trail automático
 
 database/
-├── factories/                              # 5 factories com dados BR
-├── migrations/                             # 13 migrações
+├── factories/                              # 7 factories com dados BR
+├── migrations/                             # 14 migrações
 └── seeders/                                # Seeder completo (2 empresas)
 
 tests/Feature/
 ├── Auth/AuthenticationTest.php             # 6 testes
 ├── DriverProfile/DriverProfileTest.php     # 4 testes
-├── Freight/FreightCrudTest.php             # 10 testes
-├── Freight/FreightWorkflowTest.php         # 18 testes (inclui E2E)
+├── Freight/FreightCrudTest.php             # 12 testes
+├── Freight/FreightWorkflowTest.php         # 17 testes (inclui E2E)
 ├── Tenant/TenantTest.php                   # 5 testes
 ├── Trailer/TrailerCrudTest.php             # 6 testes
-└── Truck/TruckCrudTest.php                 # 7 testes
+├── Truck/TruckCrudTest.php                 # 7 testes
+└── Waypoint/WaypointCrudTest.php           # 14 testes
 ```
 
 ---
@@ -713,7 +719,10 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 
 | Email | Senha | Role | Empresa |
 |-------|-------|------|---------|
-| Gerados via Factory | `password` | admin, manager, driver | TransLog SP / CargoExpress RJ |
+| `admin@alpha.com` | `password` | admin | Transportadora Alpha |
+| `gerente@alpha.com` | `password` | manager | Transportadora Alpha |
+| `admin@beta.com` | `password` | admin | Logística Beta |
+| Motoristas (factory) | `password` | driver | Alpha / Beta |
 
 ---
 
@@ -736,19 +745,20 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 ### Resultado Atual
 
 ```
-✓ 59 testes passando (175 assertions)
-✓ Duração: ~1.8s
+✓ 73 testes passando (216 assertions)
+✓ Duração: ~9s
 ```
 
 | Suite | Testes | Descrição |
 |-------|--------|-----------|
 | `AuthenticationTest` | 6 | Login, registro, logout, perfil |
 | `DriverProfileTest` | 4 | CRUD do perfil do motorista |
-| `FreightCrudTest` | 10 | CRUD de fretes + escopo por role |
-| `FreightWorkflowTest` | 18 | Workflow completo + teste E2E ponta-a-ponta |
+| `FreightCrudTest` | 12 | CRUD de fretes + escopo por role |
+| `FreightWorkflowTest` | 17 | Workflow completo + teste E2E ponta-a-ponta |
 | `TenantTest` | 5 | CRUD da empresa |
 | `TrailerCrudTest` | 6 | CRUD de reboques |
 | `TruckCrudTest` | 7 | CRUD de caminhões |
+| `WaypointCrudTest` | 14 | CRUD de waypoints + enforce_route + check-in/out |
 | `ExampleTest` | 2 | Smoke tests |
 | `UnitTest` | 1 | Unit test básico |
 
@@ -776,13 +786,13 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 - [x] Audit trail completo (log de todas as ações)
 - [x] Incidentes e SOS durante a viagem
 - [x] Coordenadas geográficas com PostGIS (origem/destino como POINT)
-- [x] 59 testes automatizados (175 assertions, incluindo E2E)
-- [x] Conventional Commits (21 commits)
+- [x] Waypoints e rotas — CRUD, `enforce_route`, check-in/check-out e reorder
+- [x] 73 testes automatizados (216 assertions, incluindo E2E)
+- [x] Conventional Commits (52 commits)
 - [x] Documentação completa (README)
 
 ### 🔜 Próximas Iterações
 
-- [ ] **Waypoints e rotas** — Tabela `waypoints`, campos `enforce_route` e tipos de parada
 - [ ] **Integração Google Directions API** — Traçar rota com paradas intermediárias
 - [ ] **Integração Google Places API** — Buscar postos de combustível, restaurantes, pontos de descanso
 - [ ] **Tracking GPS em tempo real** — Posição do motorista atualizada periodicamente
