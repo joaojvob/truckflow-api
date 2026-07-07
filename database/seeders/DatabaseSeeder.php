@@ -2,9 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\FreightStatus;
-use App\Enums\TrailerType;
-use App\Enums\TruckStatus;
 use App\Models\DriverProfile;
 use App\Models\Freight;
 use App\Models\Tenant;
@@ -45,9 +42,17 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Drivers com perfil completo
-        $drivers = User::factory(5)->driver()->create([
+        $drivers = User::factory(4)->driver()->create([
             'tenant_id' => $tenantAlpha->id,
         ]);
+
+        $primaryDriver = User::factory()->driver()->create([
+            'name'      => 'João Motorista',
+            'email'     => 'motorista@alpha.com',
+            'tenant_id' => $tenantAlpha->id,
+        ]);
+
+        $drivers = $drivers->prepend($primaryDriver);
 
         foreach ($drivers as $driver) {
             DriverProfile::factory()->create([
@@ -131,6 +136,14 @@ class DatabaseSeeder extends Seeder
             'driver_id' => $betaDrivers->first()->id,
         ]);
 
+        foreach ($drivers as $driver) {
+            $manager->drivers()->syncWithoutDetaching([
+                $driver->id => ['tenant_id' => $tenantAlpha->id],
+            ]);
+        }
+
         $this->command->info('✅ Seed completo: 2 empresas, usuários, veículos e fretes criados.');
+
+        $this->call(DemoDataSeeder::class);
     }
 }

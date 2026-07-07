@@ -1,0 +1,21 @@
+// https://aka.ms/devcontainer.json
+{
+    "name": "TruckFlow API (Laravel Sail)",
+    "dockerComposeFile": [
+        "../compose.yaml"
+    ],
+    "service": "laravel.test",
+    "workspaceFolder": "/var/www/html",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "bmewburn.vscode-intelephense-client",
+                "mikestead.dotenv"
+            ],
+            "settings": {}
+        }
+    },
+    "remoteUser": "sail",
+    "forwardPorts": [80, 8080, 8025, 5432, 6379],
+    "postCreateCommand": "chown -R 1000:1000 /var/www/html 2>/dev/null || true"
+}
