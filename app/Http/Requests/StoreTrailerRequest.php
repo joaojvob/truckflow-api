@@ -21,7 +21,7 @@ class StoreTrailerRequest extends FormRequest
             'type'       => ['required', new Enum(TrailerType::class)],
             'brand'      => ['nullable', 'string', 'max:100'],
             'model'      => ['nullable', 'string', 'max:100'],
-            'year'       => ['nullable', 'integer', 'min:1990', 'max:' . (date('Y') + 1)],
+            'year'       => ['nullable', 'integer', 'min:1990', 'max:'.(date('Y') + 1)],
             'axle_count' => ['sometimes', 'integer', 'in:2,3'],
             'max_weight' => ['required', 'numeric', 'min:0'],
             'length'     => ['nullable', 'numeric', 'min:0'],

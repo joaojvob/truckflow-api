@@ -16,10 +16,10 @@ class SearchPlacesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'lat'            => ['sometimes', 'numeric', 'between:-90,90'],
-            'lng'            => ['sometimes', 'numeric', 'between:-180,180'],
-            'type'           => ['required', Rule::enum(PlaceType::class)],
-            'radius_meters'  => ['sometimes', 'integer', 'min:500', 'max:50000'],
+            'lat'           => ['sometimes', 'numeric', 'between:-90,90'],
+            'lng'           => ['sometimes', 'numeric', 'between:-180,180'],
+            'type'          => ['required', Rule::enum(PlaceType::class)],
+            'radius_meters' => ['sometimes', 'integer', 'min:500', 'max:50000'],
         ];
     }
 }

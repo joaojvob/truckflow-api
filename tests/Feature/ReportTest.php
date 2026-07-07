@@ -11,7 +11,6 @@ use Tests\TestCase;
 
 class ReportTest extends TestCase
 {
-
     protected Tenant $tenant;
 
     protected User $manager;
@@ -20,7 +19,7 @@ class ReportTest extends TestCase
     {
         parent::setUp();
 
-        $this->tenant  = Tenant::factory()->create();
+        $this->tenant = Tenant::factory()->create();
         $this->manager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);
     }
 

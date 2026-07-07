@@ -46,10 +46,10 @@ class FreightWorkflowService
 
         return DB::transaction(function () use ($freight, $driver) {
             $freight->update([
-                'driver_id'        => $driver->id,
-                'status'           => FreightStatus::Assigned,
-                'driver_response'  => DriverResponse::Pending,
-                'rejection_reason' => null,
+                'driver_id'           => $driver->id,
+                'status'              => FreightStatus::Assigned,
+                'driver_response'     => DriverResponse::Pending,
+                'rejection_reason'    => null,
                 'driver_responded_at' => null,
             ]);
 
@@ -163,7 +163,7 @@ class FreightWorkflowService
 
             $freight->recordActivity(
                 action: 'doping_submitted',
-                description: "Motorista enviou exame de doping",
+                description: 'Motorista enviou exame de doping',
             );
 
             // Notificar gestor

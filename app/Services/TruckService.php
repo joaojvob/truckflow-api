@@ -27,20 +27,20 @@ class TruckService
     {
         return DB::transaction(function () use ($data) {
             $truck = Truck::create([
-                'tenant_id'          => auth()->user()->tenant_id,
-                'driver_id'          => $data['driver_id'] ?? auth()->id(),
-                'plate'              => strtoupper($data['plate']),
-                'renavam'            => $data['renavam'] ?? null,
-                'brand'              => $data['brand'],
-                'model'              => $data['model'],
-                'year'               => $data['year'],
-                'color'              => $data['color'] ?? null,
-                'axle_count'         => $data['axle_count'] ?? 2,
-                'max_weight'         => $data['max_weight'],
-                'has_trailer_hitch'  => $data['has_trailer_hitch'] ?? false,
-                'hitch_type'         => $data['hitch_type'] ?? null,
-                'status'             => TruckStatus::Available,
-                'odometer'           => $data['odometer'] ?? 0,
+                'tenant_id'         => auth()->user()->tenant_id,
+                'driver_id'         => $data['driver_id'] ?? auth()->id(),
+                'plate'             => strtoupper($data['plate']),
+                'renavam'           => $data['renavam'] ?? null,
+                'brand'             => $data['brand'],
+                'model'             => $data['model'],
+                'year'              => $data['year'],
+                'color'             => $data['color'] ?? null,
+                'axle_count'        => $data['axle_count'] ?? 2,
+                'max_weight'        => $data['max_weight'],
+                'has_trailer_hitch' => $data['has_trailer_hitch'] ?? false,
+                'hitch_type'        => $data['hitch_type'] ?? null,
+                'status'            => TruckStatus::Available,
+                'odometer'          => $data['odometer'] ?? 0,
             ]);
 
             $truck->recordActivity(

@@ -10,7 +10,6 @@ use Tests\TestCase;
 
 class TenantRateLimitTest extends TestCase
 {
-
     public function test_api_requests_are_rate_limited_per_tenant(): void
     {
         config(['app.api_rate_limit_per_minute' => 3]);

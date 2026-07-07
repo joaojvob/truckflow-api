@@ -10,7 +10,6 @@ use Tests\TestCase;
 
 class ReportExportTest extends TestCase
 {
-
     protected Tenant $tenant;
 
     protected User $manager;
@@ -19,7 +18,7 @@ class ReportExportTest extends TestCase
     {
         parent::setUp();
 
-        $this->tenant  = Tenant::factory()->create();
+        $this->tenant = Tenant::factory()->create();
         $this->manager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);
     }
 
@@ -28,10 +27,10 @@ class ReportExportTest extends TestCase
         Sanctum::actingAs($this->manager);
 
         Freight::factory()->completed()->create([
-            'tenant_id'   => $this->tenant->id,
-            'created_by'  => $this->manager->id,
-            'total_price' => 5000,
-            'completed_at'=> now(),
+            'tenant_id'    => $this->tenant->id,
+            'created_by'   => $this->manager->id,
+            'total_price'  => 5000,
+            'completed_at' => now(),
         ]);
 
         $response = $this->get('/api/v1/reports/financial/export?format=pdf');
@@ -45,10 +44,10 @@ class ReportExportTest extends TestCase
         Sanctum::actingAs($this->manager);
 
         Freight::factory()->completed()->create([
-            'tenant_id'   => $this->tenant->id,
-            'created_by'  => $this->manager->id,
-            'total_price' => 3000,
-            'completed_at'=> now(),
+            'tenant_id'    => $this->tenant->id,
+            'created_by'   => $this->manager->id,
+            'total_price'  => 3000,
+            'completed_at' => now(),
         ]);
 
         $response = $this->get('/api/v1/reports/financial/export?format=xlsx');

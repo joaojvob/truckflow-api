@@ -4,12 +4,12 @@ namespace App\Enums;
 
 enum WaypointType: string
 {
-    case FuelStop      = 'fuel_stop';
-    case RestStop      = 'rest_stop';
-    case Toll          = 'toll';
+    case FuelStop = 'fuel_stop';
+    case RestStop = 'rest_stop';
+    case Toll = 'toll';
     case DeliveryPoint = 'delivery_point';
-    case WeighStation  = 'weigh_station';
-    case Custom        = 'custom';
+    case WeighStation = 'weigh_station';
+    case Custom = 'custom';
 
     public function label(): string
     {

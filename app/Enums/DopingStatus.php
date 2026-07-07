@@ -4,7 +4,7 @@ namespace App\Enums;
 
 enum DopingStatus: string
 {
-    case Pending  = 'pending';
+    case Pending = 'pending';
     case Approved = 'approved';
     case Rejected = 'rejected';
 

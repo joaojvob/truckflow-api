@@ -22,7 +22,7 @@ class ActivityLogResource extends JsonResource
                 'name'  => $this->user?->name,
                 'email' => $this->user?->email,
             ]),
-            'created_at'     => $this->created_at?->toISOString(),
+            'created_at' => $this->created_at?->toISOString(),
         ];
     }
 }

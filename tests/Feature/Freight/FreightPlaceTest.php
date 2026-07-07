@@ -2,19 +2,16 @@
 
 namespace Tests\Feature\Freight;
 
-use App\Enums\FreightStatus;
 use App\Enums\PlaceType;
 use App\Models\Freight;
 use App\Models\Tenant;
 use App\Models\User;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class FreightPlaceTest extends TestCase
 {
-
     protected Tenant $tenant;
 
     protected User $manager;
@@ -27,7 +24,7 @@ class FreightPlaceTest extends TestCase
 
         config(['services.google_maps.api_key' => 'test-key']);
 
-        $this->tenant  = Tenant::factory()->create();
+        $this->tenant = Tenant::factory()->create();
         $this->manager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);
         $this->freight = Freight::factory()->create([
             'tenant_id'  => $this->tenant->id,

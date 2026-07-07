@@ -4,16 +4,16 @@ namespace App\Enums;
 
 enum TrailerType: string
 {
-    case Flatbed      = 'flatbed';       // Prancha / Plataforma
+    case Flatbed = 'flatbed';       // Prancha / Plataforma
     case Refrigerated = 'refrigerated';  // Baú Frigorífico
-    case DryVan       = 'dry_van';       // Baú Seco
-    case Tanker       = 'tanker';        // Tanque (líquidos/gases)
-    case Sider        = 'sider';         // Sider (lona lateral)
-    case Hopper       = 'hopper';        // Graneleiro
-    case Container    = 'container';     // Porta-contêiner
-    case Logging      = 'logging';       // Florestal (toras)
-    case Lowboy       = 'lowboy';        // Prancha rebaixada (máquinas pesadas)
-    case Livestock    = 'livestock';     // Boiadeiro
+    case DryVan = 'dry_van';       // Baú Seco
+    case Tanker = 'tanker';        // Tanque (líquidos/gases)
+    case Sider = 'sider';         // Sider (lona lateral)
+    case Hopper = 'hopper';        // Graneleiro
+    case Container = 'container';     // Porta-contêiner
+    case Logging = 'logging';       // Florestal (toras)
+    case Lowboy = 'lowboy';        // Prancha rebaixada (máquinas pesadas)
+    case Livestock = 'livestock';     // Boiadeiro
 
     public function label(): string
     {

@@ -13,7 +13,6 @@ use Tests\TestCase;
 
 class FreightRouteTest extends TestCase
 {
-
     protected Tenant $tenant;
 
     protected User $admin;
@@ -30,22 +29,22 @@ class FreightRouteTest extends TestCase
 
         config(['services.google_maps.api_key' => 'test-google-maps-key']);
 
-        $this->tenant  = Tenant::factory()->create();
-        $this->admin   = User::factory()->admin()->create(['tenant_id' => $this->tenant->id]);
+        $this->tenant = Tenant::factory()->create();
+        $this->admin = User::factory()->admin()->create(['tenant_id' => $this->tenant->id]);
         $this->manager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);
-        $this->driver  = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
+        $this->driver = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
 
         $this->freight = Freight::factory()->create([
-            'tenant_id'     => $this->tenant->id,
-            'driver_id'     => $this->driver->id,
-            'created_by'    => $this->manager->id,
-            'origin'        => DB::raw("ST_GeomFromText('POINT(-46.6333 -23.5505)', 4326)"),
-            'destination'   => DB::raw("ST_GeomFromText('POINT(-49.2733 -25.4284)', 4326)"),
-            'origin_address' => 'São Paulo, SP',
+            'tenant_id'           => $this->tenant->id,
+            'driver_id'           => $this->driver->id,
+            'created_by'          => $this->manager->id,
+            'origin'              => DB::raw("ST_GeomFromText('POINT(-46.6333 -23.5505)', 4326)"),
+            'destination'         => DB::raw("ST_GeomFromText('POINT(-49.2733 -25.4284)', 4326)"),
+            'origin_address'      => 'São Paulo, SP',
             'destination_address' => 'Curitiba, PR',
-            'price_per_km'  => 3.50,
-            'price_per_ton' => 100,
-            'weight'        => 10,
+            'price_per_km'        => 3.50,
+            'price_per_ton'       => 100,
+            'weight'              => 10,
         ]);
     }
 

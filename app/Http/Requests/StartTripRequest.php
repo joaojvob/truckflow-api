@@ -20,7 +20,7 @@ class StartTripRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'items'              => ['required', 'array'], 
+            'items'              => ['required', 'array'],
             'items.pneus'        => ['required', 'boolean'],
             'items.oleo'         => ['required', 'boolean'],
             'items.luzes'        => ['required', 'boolean'],

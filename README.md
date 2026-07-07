@@ -8,8 +8,9 @@ Backend SaaS multi-tenant construído com Laravel 12 e PostgreSQL + PostGIS. **A
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql&logoColor=white)
 ![PostGIS](https://img.shields.io/badge/PostGIS-3.5-4E9A06)
-![Tests](https://img.shields.io/badge/Tests-105%20passed-brightgreen)
-![Assertions](https://img.shields.io/badge/Assertions-305-blue)
+![CI](https://github.com/joaojvob/truckflow-api/actions/workflows/ci.yml/badge.svg)
+![Tests](https://img.shields.io/badge/Tests-115%2B-brightgreen)
+![PHPStan](https://img.shields.io/badge/PHPStan-level%205-blue)
 ![MVP](https://img.shields.io/badge/MVP%20Backend-Concluído-success)
 ![API v2](https://img.shields.io/badge/API%20v2-Concluído-success)
 
@@ -31,6 +32,8 @@ Backend SaaS multi-tenant construído com Laravel 12 e PostgreSQL + PostGIS. **A
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Setup Local](#-setup-local)
 - [Testes](#-testes)
+- [Qualidade de código](#-qualidade-de-código)
+- [Documentação](#-documentação)
 - [Roadmap](#-roadmap)
 
 ---
@@ -43,6 +46,8 @@ Backend SaaS multi-tenant construído com Laravel 12 e PostgreSQL + PostGIS. **A
 | **Frontend Web** | 🔜 Repositório separado | Painel do gestor/admin |
 | **App Mobile** | 🔜 Repositório separado | App do motorista |
 | **API v2** | ✅ Concluído | Places, GPS em tempo real, WebSocket (Reverb), relatórios |
+| **Observabilidade** | ✅ Concluído | System logs, telemetria admin, PHPStan + Pint no CI |
+| **Geo Java (opcional)** | ✅ Esqueleto | `truckflow-geo` — Spring Boot + `RoutingProvider` |
 
 > Este repositório contém **somente o backend**. Não há Vite, npm, React nem Flutter aqui — apenas a API consumível via HTTP com token Sanctum.
 
@@ -101,12 +106,15 @@ O **TruckFlow** é uma plataforma SaaS para transportadoras gerenciarem:
 
 - **Multi-tenancy** via Global Scope (`BelongsToTenant` trait)
 - **Thin Controllers** — lógica de negócio nos Services
+- **DIP** — `RoutingProvider` (Google direto ou microserviço Java)
 - **Form Requests** para validação e autorização
 - **API Resources** para transformação de output
 - **Policies** para autorização granular por role
 - **Enums** para status, tipos e roles (type-safe)
 - **Conventional Commits** no histórico Git
 - **Audit Trail** com `LogsActivity` trait
+
+> Documentação completa: **[docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)**
 
 ---
 
@@ -295,13 +303,24 @@ destination = ST_GeomFromText('POINT(-49.2733 -25.4284)', 4326)  -- Curitiba
 
 ### Google Maps Platform — Uso na API e nos Clientes
 
-A **API** usa a [Directions API](https://developers.google.com/maps/documentation/directions) para calcular rotas e retorna `polyline` + coordenadas. Os **clientes** (web/mobile) usam essa polyline para desenhar o mapa com a SDK de sua escolha.
+A **API** calcula rotas via `RoutingProvider` — implementação **Google direta** (padrão) ou **microserviço Java** [`truckflow-geo`](../truckflow-geo):
+
+```env
+GEO_ROUTING_DRIVER=google_maps   # padrão
+GEO_ROUTING_DRIVER=java            # delega ao Spring Boot
+GEO_JAVA_SERVICE_URL=http://truckflow-geo:8081
+```
+
+```bash
+# Subir API + geo service
+docker compose -f compose.yaml -f docker-compose.geo.yml up -d
+```
 
 | API Google | Quem usa | Finalidade |
 |------------|----------|------------|
-| **Directions API** | Backend (este repo) | Calcular rota com waypoints |
+| **Directions API** | Backend ou truckflow-geo | Calcular rota com waypoints |
 | **Maps JavaScript / SDK mobile** | Cliente web/mobile | Exibir mapa e navegação |
-| **Places API** | Backend (este repo) | Buscar postos, restaurantes, descanso |
+| **Places API** | Backend ou truckflow-geo | Buscar postos, restaurantes, descanso |
 | **Geocoding API** | Cliente ou backend | Converter endereço ↔ coordenadas |
 
 > Crédito gratuito de **US$ 200/mês** no Google Maps Platform — suficiente para desenvolvimento e aprendizado.
@@ -731,25 +750,18 @@ app/
 │   ├── TruckService.php
 │   └── WaypointService.php                 # CRUD + reorder de waypoints
 └── Traits/
-    ├── ApiResponser.php
     ├── BelongsToTenant.php                 # Multi-tenancy (Global Scope)
+    ├── ExtractsGeographyCoordinates.php    # PostGIS lat/lng
     └── LogsActivity.php                    # Audit trail automático
 
 database/
-├── factories/                              # 7 factories com dados BR
-├── migrations/                             # 14 migrações
-└── seeders/                                # Seeder completo (2 empresas)
+├── factories/                              # 9 factories com dados BR
+├── migrations/                             # 21 migrações
+└── seeders/                                # DemoDataSeeder + seeds
 
-tests/Feature/
-├── Auth/AuthenticationTest.php             # 6 testes
-├── DriverProfile/DriverProfileTest.php     # 4 testes
-├── Freight/FreightCrudTest.php             # 12 testes
-├── Freight/FreightRouteTest.php            # 8 testes
-├── Freight/FreightWorkflowTest.php         # 17 testes (inclui E2E)
-├── Tenant/TenantTest.php                   # 5 testes
-├── Trailer/TrailerCrudTest.php             # 6 testes
-├── Truck/TruckCrudTest.php                 # 7 testes
-└── Waypoint/WaypointCrudTest.php           # 14 testes
+tests/
+├── Feature/                                # Testes HTTP (DatabaseTransactions)
+└── Unit/                                   # Enums, pricing, SystemLogger
 ```
 
 ---
@@ -899,7 +911,7 @@ Os testes de feature usam **`DatabaseTransactions`** no `TestCase` base: cada te
 ### Resultado Atual
 
 ```
-✓ 105 testes passando (305 assertions)
+✓ 115+ testes passando
 ✓ Duração: ~6s
 ```
 
@@ -907,6 +919,7 @@ Os testes de feature usam **`DatabaseTransactions`** no `TestCase` base: cada te
 |-------|--------|-----------|
 | `AuthenticationTest` | 6 | Login, registro, logout, perfil |
 | `AdminPanelTest` | 7 | Telemetria, system logs e painel admin |
+| `TenantIsolationTest` | 5 | Isolamento cross-tenant (SaaS) |
 | `DriverProfileTest` | 4 | CRUD do perfil do motorista |
 | `DocumentUploadTest` | 5 | Upload CNH/CRLV |
 | `FreightCrudTest` | 12 | CRUD de fretes + escopo por role |
@@ -921,7 +934,31 @@ Os testes de feature usam **`DatabaseTransactions`** no `TestCase` base: cada te
 | `TrailerCrudTest` | 6 | CRUD de reboques |
 | `TruckCrudTest` | 7 | CRUD de caminhões |
 | `WaypointCrudTest` | 14 | CRUD de waypoints + enforce_route + check-in/out |
+| `FreightStatusTest` | 4+ | Unit — máquina de transição de estados |
 | `ExampleTest` | 2 | Smoke tests |
+
+---
+
+## ✅ Qualidade de código
+
+| Ferramenta | Comando | Descrição |
+|------------|---------|-----------|
+| **Laravel Pint** | `composer lint` | Padrão de estilo PSR-12 + alinhamento `=>` |
+| **PHPStan (Larastan)** | `composer analyse` | Análise estática nível 5 com baseline |
+| **Suite completa** | `composer quality` | lint + analyse + test |
+
+O CI (GitHub Actions) executa Pint, PHPStan e testes em jobs separados.
+
+---
+
+## 📚 Documentação
+
+| Documento | Descrição |
+|-----------|-----------|
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | C4, ADRs, bounded contexts, integração Java |
+| [docs/FRONTEND-WEB-BRIEF.md](./docs/FRONTEND-WEB-BRIEF.md) | Handoff para painel React |
+| [truckflow-geo](../truckflow-geo/README.md) | Microserviço Spring Boot (geo) |
+| `/docs/api` | OpenAPI interativa (Scramble) |
 | `UnitTest` | 1 | Unit test básico |
 
 > O teste `test_complete_workflow_e2e` executa o fluxo completo: criar frete → atribuir → aceitar → enviar doping → enviar checklist → aprovar doping → liberar viagem → iniciar → finalizar. Validando o estado final de todos os campos.
@@ -951,20 +988,25 @@ Os testes de feature usam **`DatabaseTransactions`** no `TestCase` base: cada te
 - [x] Waypoints, `enforce_route`, check-in/check-out e reorder
 - [x] Google Directions API (polyline + distância)
 - [x] CI (GitHub Actions) + Docker produção + rate limiting por tenant
-- [x] 90 testes automatizados (271 assertions)
+- [x] 115+ testes automatizados
 - [x] Repositório API-only (sem assets de frontend)
 - [x] Google Places API (busca de postos, restaurantes, etc.)
 - [x] Tracking GPS em tempo real com broadcast WebSocket
 - [x] Laravel Reverb para eventos ao vivo
 - [x] Relatórios (dashboard + financeiro)
 - [x] Documentação OpenAPI com Scramble (`/docs/api`)
+- [x] Upload de documentos — CNH, CRLV
+- [x] Exportar relatórios — PDF e Excel
+- [x] Telemetria admin + system logs
+- [x] PHPStan + Pint no CI
+- [x] Testes de isolamento cross-tenant
+- [x] `RoutingProvider` + esqueleto `truckflow-geo` (Java)
 
 ### 🔜 Próximas Iterações (backend)
 
-- [ ] **Upload de documentos** — CNH, CRLV, apólice de seguro
-- [ ] **Exportar relatórios** — PDF e Excel
-- [ ] **Integração ANTT** — Consulta de habilitação e RNTRC
-- [ ] **API v2** — Versionamento e breaking changes
+- [ ] **Integração ANTT** — Consulta de habilitação e RNTRC (microserviço Java)
+- [ ] **OpenTelemetry** — Métricas e traces exportáveis
+- [ ] **API v2** — Versionamento formal de breaking changes
 
 ### 🔜 Clientes (repositórios separados)
 

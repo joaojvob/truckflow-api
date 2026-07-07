@@ -14,11 +14,11 @@ class UpdateTruckRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'plate'             => ['sometimes', 'string', 'max:10', 'unique:trucks,plate,' . $this->route('truck')?->id],
+            'plate'             => ['sometimes', 'string', 'max:10', 'unique:trucks,plate,'.$this->route('truck')?->id],
             'renavam'           => ['nullable', 'string', 'max:20'],
             'brand'             => ['sometimes', 'string', 'max:100'],
             'model'             => ['sometimes', 'string', 'max:100'],
-            'year'              => ['sometimes', 'integer', 'min:1990', 'max:' . (date('Y') + 1)],
+            'year'              => ['sometimes', 'integer', 'min:1990', 'max:'.(date('Y') + 1)],
             'color'             => ['nullable', 'string', 'max:50'],
             'axle_count'        => ['sometimes', 'integer', 'in:2,3,4,6'],
             'max_weight'        => ['sometimes', 'numeric', 'min:0'],

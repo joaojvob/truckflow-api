@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\RoutingProvider;
 use App\Enums\PlaceType;
 use App\Models\Freight;
 use Illuminate\Validation\ValidationException;
@@ -9,12 +10,12 @@ use Illuminate\Validation\ValidationException;
 /**
  * Busca pontos de interesse (postos, restaurantes, etc.) próximos a um frete.
  *
- * Delega a consulta à Google Places API via {@see GoogleMapsService}.
+ * Delega ao {@see RoutingProvider} configurado (Google direto ou microserviço Java).
  */
 class PlaceSearchService
 {
     public function __construct(
-        protected GoogleMapsService $googleMapsService,
+        protected RoutingProvider $routingProvider,
     ) {}
 
     /**
@@ -44,7 +45,7 @@ class PlaceSearchService
             ? $data['type']
             : PlaceType::from($data['type']);
 
-        return $this->googleMapsService->searchNearbyPlaces(
+        return $this->routingProvider->searchNearbyPlaces(
             lat: (float) $lat,
             lng: (float) $lng,
             type: $type->googleType(),

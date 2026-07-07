@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\SystemLogLevel;
 use App\Models\ActivityLog;
 use App\Models\RequestLog;
 use App\Models\SystemLog;
@@ -193,7 +192,7 @@ class AdminTelemetryService
     private function resolvePeriod(array $filters): array
     {
         $from = isset($filters['from']) ? Carbon::parse($filters['from'])->startOfDay() : now()->subDays(7)->startOfDay();
-        $to   = isset($filters['to']) ? Carbon::parse($filters['to'])->endOfDay() : now()->endOfDay();
+        $to = isset($filters['to']) ? Carbon::parse($filters['to'])->endOfDay() : now()->endOfDay();
 
         return [$from, $to];
     }

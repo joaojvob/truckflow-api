@@ -4,9 +4,9 @@ namespace App\Enums;
 
 enum UserRole: string
 {
-    case Admin   = 'admin';
+    case Admin = 'admin';
     case Manager = 'manager';
-    case Driver  = 'driver';
+    case Driver = 'driver';
 
     public function label(): string
     {

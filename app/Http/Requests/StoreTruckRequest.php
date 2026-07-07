@@ -18,7 +18,7 @@ class StoreTruckRequest extends FormRequest
             'renavam'           => ['nullable', 'string', 'max:20'],
             'brand'             => ['required', 'string', 'max:100'],
             'model'             => ['required', 'string', 'max:100'],
-            'year'              => ['required', 'integer', 'min:1990', 'max:' . (date('Y') + 1)],
+            'year'              => ['required', 'integer', 'min:1990', 'max:'.(date('Y') + 1)],
             'color'             => ['nullable', 'string', 'max:50'],
             'axle_count'        => ['sometimes', 'integer', 'in:2,3,4,6'],
             'max_weight'        => ['required', 'numeric', 'min:0'],

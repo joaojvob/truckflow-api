@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\RoutingProvider;
+use App\Services\GoogleMapsService;
+use App\Services\JavaGeoRoutingProvider;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -17,7 +20,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(RoutingProvider::class, function () {
+            return match (config('services.geo.driver')) {
+                'java'  => $this->app->make(JavaGeoRoutingProvider::class),
+                default => $this->app->make(GoogleMapsService::class),
+            };
+        });
     }
 
     /**

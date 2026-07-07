@@ -9,7 +9,6 @@ use Tests\TestCase;
 
 class TenantTest extends TestCase
 {
-
     public function test_user_without_tenant_can_create_company(): void
     {
         $user = User::factory()->create([
@@ -35,7 +34,7 @@ class TenantTest extends TestCase
     public function test_user_with_tenant_cannot_create_another_company(): void
     {
         $tenant = Tenant::factory()->create();
-        $user   = User::factory()->admin()->create(['tenant_id' => $tenant->id]);
+        $user = User::factory()->admin()->create(['tenant_id' => $tenant->id]);
 
         Sanctum::actingAs($user);
 
@@ -51,7 +50,7 @@ class TenantTest extends TestCase
     public function test_admin_can_view_own_company(): void
     {
         $tenant = Tenant::factory()->create(['name' => 'Alpha Transportes']);
-        $admin  = User::factory()->admin()->create(['tenant_id' => $tenant->id]);
+        $admin = User::factory()->admin()->create(['tenant_id' => $tenant->id]);
 
         Sanctum::actingAs($admin);
 
@@ -64,7 +63,7 @@ class TenantTest extends TestCase
     public function test_admin_can_update_company(): void
     {
         $tenant = Tenant::factory()->create();
-        $admin  = User::factory()->admin()->create(['tenant_id' => $tenant->id]);
+        $admin = User::factory()->admin()->create(['tenant_id' => $tenant->id]);
 
         Sanctum::actingAs($admin);
 

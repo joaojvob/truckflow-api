@@ -13,7 +13,6 @@ use Tests\TestCase;
 
 class DocumentUploadTest extends TestCase
 {
-
     protected Tenant $tenant;
 
     protected User $driver;
@@ -26,8 +25,8 @@ class DocumentUploadTest extends TestCase
 
         Storage::fake('private');
 
-        $this->tenant  = Tenant::factory()->create();
-        $this->driver  = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
+        $this->tenant = Tenant::factory()->create();
+        $this->driver = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
         $this->manager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);
     }
 

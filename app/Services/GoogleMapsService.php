@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\RoutingProvider;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
@@ -11,7 +12,7 @@ use Illuminate\Validation\ValidationException;
  *
  * Requer `GOOGLE_MAPS_API_KEY` em config/services.php.
  */
-class GoogleMapsService
+class GoogleMapsService implements RoutingProvider
 {
     private const DIRECTIONS_URL = 'https://maps.googleapis.com/maps/api/directions/json';
 
@@ -98,10 +99,10 @@ class GoogleMapsService
         $route = $data['routes'][0];
 
         return [
-            'polyline'          => $route['overview_polyline']['points'] ?? '',
-            'distance_meters'   => (int) collect($route['legs'] ?? [])->sum('distance.value'),
-            'duration_seconds'  => (int) collect($route['legs'] ?? [])->sum('duration.value'),
-            'bounds'            => $route['bounds'] ?? null,
+            'polyline'         => $route['overview_polyline']['points'] ?? '',
+            'distance_meters'  => (int) collect($route['legs'] ?? [])->sum('distance.value'),
+            'duration_seconds' => (int) collect($route['legs'] ?? [])->sum('duration.value'),
+            'bounds'           => $route['bounds'] ?? null,
         ];
     }
 

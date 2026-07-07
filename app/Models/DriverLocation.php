@@ -25,7 +25,7 @@ class DriverLocation extends Model
     {
         return [
             'speed_kmh'   => 'decimal:2',
-            'heading'   => 'decimal:2',
+            'heading'     => 'decimal:2',
             'recorded_at' => 'datetime',
         ];
     }

@@ -39,4 +39,18 @@ return [
         'api_key' => env('GOOGLE_MAPS_API_KEY'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Provedor de geolocalização (roteamento e places)
+    |--------------------------------------------------------------------------
+    |
+    | google_maps — chamada direta à Google Maps API (padrão)
+    | java        — microserviço truckflow-geo (Spring Boot)
+    |
+    */
+    'geo' => [
+        'driver'   => env('GEO_ROUTING_DRIVER', 'google_maps'),
+        'java_url' => env('GEO_JAVA_SERVICE_URL', 'http://truckflow-geo:8081'),
+    ],
+
 ];

@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use App\Models\RequestLog;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -61,17 +60,17 @@ class LogApiRequest
         }
 
         RequestLog::withoutGlobalScopes()->create([
-            'tenant_id'    => $request->user()?->tenant_id,
-            'user_id'      => $request->user()?->id,
-            'request_id'   => $requestId,
-            'method'       => $request->method(),
-            'route_name'   => $route?->getName(),
-            'uri'          => $route?->uri() ?? '/'.$request->path(),
-            'action'       => $action,
-            'status_code'  => $response->getStatusCode(),
-            'duration_ms'  => (int) round((microtime(true) - $startedAt) * 1000),
-            'ip'           => $request->ip(),
-            'user_agent'   => Str::limit((string) $request->userAgent(), 500),
+            'tenant_id'   => $request->user()?->tenant_id,
+            'user_id'     => $request->user()?->id,
+            'request_id'  => $requestId,
+            'method'      => $request->method(),
+            'route_name'  => $route?->getName(),
+            'uri'         => $route?->uri() ?? '/'.$request->path(),
+            'action'      => $action,
+            'status_code' => $response->getStatusCode(),
+            'duration_ms' => (int) round((microtime(true) - $startedAt) * 1000),
+            'ip'          => $request->ip(),
+            'user_agent'  => Str::limit((string) $request->userAgent(), 500),
         ]);
     }
 }

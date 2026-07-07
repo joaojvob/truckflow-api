@@ -40,21 +40,21 @@ class SystemLogger
         $sanitized = $this->sanitize($context);
 
         $entry = SystemLog::withoutGlobalScopes()->create([
-            'tenant_id'          => $context['tenant_id'] ?? $request?->user()?->tenant_id,
-            'user_id'            => $context['user_id'] ?? $request?->user()?->id,
-            'level'              => $level,
-            'channel'            => $channel,
-            'message'            => Str::limit($message, 500),
-            'context'            => $sanitized ?: null,
-            'exception_class'    => $exception ? $exception::class : null,
-            'exception_message'  => $exception ? Str::limit($exception->getMessage(), 1000) : null,
-            'trace'              => $this->shouldStoreTrace() && $exception
+            'tenant_id'         => $context['tenant_id'] ?? $request?->user()?->tenant_id,
+            'user_id'           => $context['user_id'] ?? $request?->user()?->id,
+            'level'             => $level,
+            'channel'           => $channel,
+            'message'           => Str::limit($message, 500),
+            'context'           => $sanitized ?: null,
+            'exception_class'   => $exception ? $exception::class : null,
+            'exception_message' => $exception ? Str::limit($exception->getMessage(), 1000) : null,
+            'trace'             => $this->shouldStoreTrace() && $exception
                 ? Str::limit($exception->getTraceAsString(), 8000)
                 : null,
-            'request_id'         => $context['request_id'] ?? $request?->attributes->get('request_id'),
-            'method'             => $request?->method(),
-            'url'                => $request?->fullUrl(),
-            'ip'                 => $request?->ip(),
+            'request_id' => $context['request_id'] ?? $request?->attributes->get('request_id'),
+            'method'     => $request?->method(),
+            'url'        => $request?->fullUrl(),
+            'ip'         => $request?->ip(),
         ]);
 
         Log::log($level->value, $message, array_filter([
@@ -129,11 +129,13 @@ class SystemLogger
         foreach ($data as $key => $value) {
             if (in_array(strtolower((string) $key), self::SENSITIVE_KEYS, true)) {
                 $sanitized[$key] = '[redacted]';
+
                 continue;
             }
 
             if (is_array($value)) {
                 $sanitized[$key] = $this->sanitize($value);
+
                 continue;
             }
 

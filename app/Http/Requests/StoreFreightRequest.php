@@ -16,9 +16,9 @@ class StoreFreightRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'driver_id'              => ['required', 'exists:users,id'],
-            'truck_id'               => ['nullable', 'exists:trucks,id'],
-            'trailer_id'             => ['nullable', 'exists:trailers,id'],
+            'driver_id'  => ['required', 'exists:users,id'],
+            'truck_id'   => ['nullable', 'exists:trucks,id'],
+            'trailer_id' => ['nullable', 'exists:trailers,id'],
 
             // Carga
             'cargo_name'             => ['required', 'string', 'max:255'],
@@ -29,44 +29,44 @@ class StoreFreightRequest extends FormRequest
             'requires_refrigeration' => ['sometimes', 'boolean'],
 
             // Requisitos de veículo
-            'required_trailer_type'  => ['nullable', new Enum(TrailerType::class)],
-            'required_hitch_type'    => ['nullable', 'string', 'in:fifth_wheel,pintle,drawbar'],
+            'required_trailer_type' => ['nullable', new Enum(TrailerType::class)],
+            'required_hitch_type'   => ['nullable', 'string', 'in:fifth_wheel,pintle,drawbar'],
 
             // Endereços e coordenadas
-            'origin_address'         => ['required', 'string', 'max:500'],
-            'destination_address'    => ['required', 'string', 'max:500'],
-            'origin_lat'             => ['required', 'numeric', 'between:-90,90'],
-            'origin_lng'             => ['required', 'numeric', 'between:-180,180'],
-            'destination_lat'        => ['required', 'numeric', 'between:-90,90'],
-            'destination_lng'        => ['required', 'numeric', 'between:-180,180'],
+            'origin_address'      => ['required', 'string', 'max:500'],
+            'destination_address' => ['required', 'string', 'max:500'],
+            'origin_lat'          => ['required', 'numeric', 'between:-90,90'],
+            'origin_lng'          => ['required', 'numeric', 'between:-180,180'],
+            'destination_lat'     => ['required', 'numeric', 'between:-90,90'],
+            'destination_lng'     => ['required', 'numeric', 'between:-180,180'],
 
             // Distância e tempo
-            'distance_km'            => ['nullable', 'numeric', 'min:0'],
-            'estimated_hours'        => ['nullable', 'integer', 'min:1'],
+            'distance_km'     => ['nullable', 'numeric', 'min:0'],
+            'estimated_hours' => ['nullable', 'integer', 'min:1'],
 
             // Preço
-            'price_per_km'           => ['nullable', 'numeric', 'min:0'],
-            'price_per_ton'          => ['nullable', 'numeric', 'min:0'],
-            'toll_cost'              => ['nullable', 'numeric', 'min:0'],
-            'fuel_cost'              => ['nullable', 'numeric', 'min:0'],
+            'price_per_km'  => ['nullable', 'numeric', 'min:0'],
+            'price_per_ton' => ['nullable', 'numeric', 'min:0'],
+            'toll_cost'     => ['nullable', 'numeric', 'min:0'],
+            'fuel_cost'     => ['nullable', 'numeric', 'min:0'],
 
             // Prazo
-            'deadline_at'            => ['nullable', 'date', 'after:now'],
+            'deadline_at' => ['nullable', 'date', 'after:now'],
 
             // Rota
-            'enforce_route'          => ['sometimes', 'boolean'],
+            'enforce_route' => ['sometimes', 'boolean'],
 
             // Waypoints (inline na criação)
-            'waypoints'                           => ['sometimes', 'array'],
-            'waypoints.*.name'                    => ['required', 'string', 'max:255'],
-            'waypoints.*.type'                    => ['required', 'string', 'in:fuel_stop,rest_stop,toll,delivery_point,weigh_station,custom'],
-            'waypoints.*.lat'                     => ['required', 'numeric', 'between:-90,90'],
-            'waypoints.*.lng'                     => ['required', 'numeric', 'between:-180,180'],
-            'waypoints.*.address'                 => ['nullable', 'string', 'max:500'],
-            'waypoints.*.mandatory'               => ['sometimes', 'boolean'],
-            'waypoints.*.order'                   => ['sometimes', 'integer', 'min:0'],
-            'waypoints.*.estimated_stop_minutes'   => ['nullable', 'integer', 'min:1', 'max:1440'],
-            'waypoints.*.description'             => ['nullable', 'string', 'max:1000'],
+            'waypoints'                          => ['sometimes', 'array'],
+            'waypoints.*.name'                   => ['required', 'string', 'max:255'],
+            'waypoints.*.type'                   => ['required', 'string', 'in:fuel_stop,rest_stop,toll,delivery_point,weigh_station,custom'],
+            'waypoints.*.lat'                    => ['required', 'numeric', 'between:-90,90'],
+            'waypoints.*.lng'                    => ['required', 'numeric', 'between:-180,180'],
+            'waypoints.*.address'                => ['nullable', 'string', 'max:500'],
+            'waypoints.*.mandatory'              => ['sometimes', 'boolean'],
+            'waypoints.*.order'                  => ['sometimes', 'integer', 'min:0'],
+            'waypoints.*.estimated_stop_minutes' => ['nullable', 'integer', 'min:1', 'max:1440'],
+            'waypoints.*.description'            => ['nullable', 'string', 'max:1000'],
         ];
     }
 }

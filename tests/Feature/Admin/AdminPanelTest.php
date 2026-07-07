@@ -14,7 +14,6 @@ use Tests\TestCase;
 
 class AdminPanelTest extends TestCase
 {
-
     protected Tenant $tenant;
 
     protected User $admin;
@@ -25,8 +24,8 @@ class AdminPanelTest extends TestCase
     {
         parent::setUp();
 
-        $this->tenant  = Tenant::factory()->create();
-        $this->admin   = User::factory()->admin()->create(['tenant_id' => $this->tenant->id]);
+        $this->tenant = Tenant::factory()->create();
+        $this->admin = User::factory()->admin()->create(['tenant_id' => $this->tenant->id]);
         $this->manager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);
     }
 
@@ -35,13 +34,13 @@ class AdminPanelTest extends TestCase
         Sanctum::actingAs($this->admin);
 
         RequestLog::withoutGlobalScopes()->create([
-            'tenant_id'    => $this->tenant->id,
-            'user_id'      => $this->admin->id,
-            'request_id'   => fake()->uuid(),
-            'method'       => 'GET',
-            'uri'          => 'api/v1/me',
-            'status_code'  => 200,
-            'duration_ms'  => 42,
+            'tenant_id'   => $this->tenant->id,
+            'user_id'     => $this->admin->id,
+            'request_id'  => fake()->uuid(),
+            'method'      => 'GET',
+            'uri'         => 'api/v1/me',
+            'status_code' => 200,
+            'duration_ms' => 42,
         ]);
 
         SystemLog::withoutGlobalScopes()->create([
@@ -71,13 +70,13 @@ class AdminPanelTest extends TestCase
         ]);
 
         RequestLog::withoutGlobalScopes()->create([
-            'tenant_id'    => $this->tenant->id,
-            'user_id'      => $this->admin->id,
-            'request_id'   => fake()->uuid(),
-            'method'       => 'POST',
-            'uri'          => 'api/v1/freights',
-            'status_code'  => 201,
-            'duration_ms'  => 120,
+            'tenant_id'   => $this->tenant->id,
+            'user_id'     => $this->admin->id,
+            'request_id'  => fake()->uuid(),
+            'method'      => 'POST',
+            'uri'         => 'api/v1/freights',
+            'status_code' => 201,
+            'duration_ms' => 120,
         ]);
 
         ActivityLog::create([

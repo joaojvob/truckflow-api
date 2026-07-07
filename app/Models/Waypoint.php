@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Waypoint extends Model
 {
-    use HasFactory, BelongsToTenant, ExtractsGeographyCoordinates;
+    use BelongsToTenant, ExtractsGeographyCoordinates, HasFactory;
 
     protected $fillable = [
         'tenant_id',

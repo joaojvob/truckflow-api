@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Trailer extends Model
 {
-    use HasFactory, BelongsToTenant, LogsActivity;
+    use BelongsToTenant, HasFactory, LogsActivity;
 
     protected $fillable = [
         'tenant_id',
@@ -38,15 +38,15 @@ class Trailer extends Model
     protected function casts(): array
     {
         return [
-            'type'       => TrailerType::class,
-            'status'     => TruckStatus::class,
-            'is_loaded'  => 'boolean',
-            'max_weight' => 'decimal:2',
-            'length'     => 'decimal:2',
-            'year'       => 'integer',
-            'axle_count'        => 'integer',
-            'crlv_expiry'       => 'date',
-            'crlv_uploaded_at'  => 'datetime',
+            'type'             => TrailerType::class,
+            'status'           => TruckStatus::class,
+            'is_loaded'        => 'boolean',
+            'max_weight'       => 'decimal:2',
+            'length'           => 'decimal:2',
+            'year'             => 'integer',
+            'axle_count'       => 'integer',
+            'crlv_expiry'      => 'date',
+            'crlv_uploaded_at' => 'datetime',
         ];
     }
 

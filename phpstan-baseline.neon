@@ -1,0 +1,1201 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Cannot call method toISOString\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Events/DriverLocationUpdated.php
+
+		-
+			message: '#^Method App\\Events\\DriverLocationUpdated\:\:broadcastWith\(\) should return array\{freight_id\: int, driver_id\: int, lat\: float\|null, lng\: float\|null, speed_kmh\: string\|null, heading\: string\|null, recorded_at\: string\|null\} but returns array\{freight_id\: int\<0, max\>, driver_id\: int\<0, max\>, lat\: mixed, lng\: mixed, speed_kmh\: float\|null, heading\: float\|null, recorded_at\: mixed\}\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Events/DriverLocationUpdated.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Events/SosTriggered.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cnh_file_path\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Http/Controllers/Api/DriverProfileController.php
+
+		-
+			message: '#^Parameter \#1 \$boolean of function abort_unless expects bool, Illuminate\\Database\\Eloquent\\Model\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Api/DriverProfileController.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/TenantController.php
+
+		-
+			message: '#^Parameter \#1 \$tenant of method App\\Services\\TenantService\:\:update\(\) expects App\\Models\\Tenant, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/TenantController.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ActivityLogResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ActivityLogResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ActivityLogResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ChecklistResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ChecklistResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ChecklistResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ChecklistResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\ChecklistResource\:\:\$items\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/ChecklistResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverLocationResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverLocationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverLocationResource\:\:\$driver_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverLocationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverLocationResource\:\:\$freight_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverLocationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverLocationResource\:\:\$heading\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverLocationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverLocationResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverLocationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverLocationResource\:\:\$recorded_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverLocationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverLocationResource\:\:\$speed_kmh\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverLocationResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\DriverLocationResource\:\:getCoordinates\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/DriverLocationResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$birth_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$city\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$cnh_category\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$cnh_expiry\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$cnh_number\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$cnh_uploaded_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$cpf\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$emergency_contact_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$emergency_contact_phone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$is_available\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$phone\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$state\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\DriverProfileResource\:\:\$zip_code\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\DriverProfileResource\:\:hasCnhDocument\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\DriverProfileResource\:\:isCnhExpired\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\DriverProfileResource\:\:isCnhExpiringSoon\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/DriverProfileResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$approved_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$cargo_description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$cargo_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$checklist_completed\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$completed_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$deadline_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$destination_address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$distance_km\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$doping_approved\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$driver_notes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$driver_rating\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$driver_responded_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$driver_response\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$enforce_route\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$estimated_hours\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$fuel_cost\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$is_fragile\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$is_hazardous\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$manager_approved\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$origin_address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$price_per_km\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$price_per_ton\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$rejection_reason\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$required_hitch_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$required_trailer_type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$requires_refrigeration\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$route_calculated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$route_distance_meters\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$route_duration_seconds\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$route_polyline\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$started_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$toll_cost\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$total_price\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightResource\:\:\$weight\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\FreightResource\:\:hasCalculatedRoute\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/FreightResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightRouteResource\:\:\$distance_km\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightRouteResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightRouteResource\:\:\$estimated_hours\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightRouteResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightRouteResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightRouteResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightRouteResource\:\:\$route_calculated_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightRouteResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightRouteResource\:\:\$route_distance_meters\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightRouteResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightRouteResource\:\:\$route_duration_seconds\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightRouteResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\FreightRouteResource\:\:\$route_polyline\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/FreightRouteResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\FreightRouteResource\:\:getDestinationCoordinates\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/FreightRouteResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\FreightRouteResource\:\:getOriginCoordinates\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/FreightRouteResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\IncidentResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/IncidentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\IncidentResource\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/IncidentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\IncidentResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/IncidentResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\IncidentResource\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/IncidentResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RequestLogResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RequestLogResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/RequestLogResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/SystemLogResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/SystemLogResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/SystemLogResource.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Resources/SystemLogResource.php
+
+		-
+			message: '#^Cannot call method toISOString\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Resources/SystemLogResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TenantResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TenantResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TenantResource\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TenantResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TenantResource\:\:\$settings\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TenantResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TenantResource\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TenantResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$axle_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$brand\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$crlv_expiry\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$crlv_uploaded_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$hitch_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$is_loaded\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$length\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$max_weight\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$model\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$plate\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$renavam\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TrailerResource\:\:\$year\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\TrailerResource\:\:hasCrlvDocument\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\TrailerResource\:\:isCrlvExpired\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/TrailerResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$axle_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$brand\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$color\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$crlv_expiry\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$crlv_uploaded_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$has_trailer_hitch\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$hitch_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$max_weight\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$model\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$odometer\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$plate\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$renavam\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\TruckResource\:\:\$year\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\TruckResource\:\:hasCrlvDocument\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\TruckResource\:\:isCrlvExpired\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/TruckResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\UserResource\:\:\$role\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Resources/UserResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$address\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$arrived_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$created_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$departed_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$estimated_stop_minutes\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$freight_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$mandatory\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$order\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Resources\\WaypointResource\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\WaypointResource\:\:isCompleted\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Call to an undefined method App\\Http\\Resources\\WaypointResource\:\:isVisited\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Http/Resources/WaypointResource.php
+
+		-
+			message: '#^Cannot call method between\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/DriverProfile.php
+
+		-
+			message: '#^Cannot call method isPast\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/DriverProfile.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>tenant_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Freight.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>tenant_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Incident.php
+
+		-
+			message: '#^Cannot call method isPast\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Trailer.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>tenant_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Trailer.php
+
+		-
+			message: '#^Cannot call method isPast\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Models/Truck.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>tenant_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Models/Truck.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Notifications/ChecklistSubmitted.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Notifications/DopingTestReviewed.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$cargo_name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Notifications/DopingTestSubmitted.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Notifications/DopingTestSubmitted.php
+
+		-
+			message: '#^Cannot call method toISOString\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Notifications/FreightAssigned.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Notifications/FreightDriverResponded.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Notifications/FreightStatusChanged.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Notifications/FreightStatusChanged.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$driver_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Policies/WaypointPolicy.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$status\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Policies/WaypointPolicy.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>tenant_id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Providers/AppServiceProvider.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\RequestLog\:\:\$total\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AdminTelemetryService.php
+
+		-
+			message: '#^Method App\\Services\\DriverTrackingService\:\:history\(\) should return Illuminate\\Support\\Collection\<int, App\\Models\\DriverLocation\> but returns Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/DriverTrackingService.php
+
+		-
+			message: '#^Method App\\Services\\DriverTrackingService\:\:latest\(\) should return App\\Models\\DriverLocation\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/DriverTrackingService.php
+
+		-
+			message: '#^Cannot call method canTransitionTo\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/FreightManagementService.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/FreightManagementService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getCoordinates\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/FreightRouteService.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Services/FreightService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 4
+			path: app/Services/FreightWorkflowService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:notify\(\)\.$#'
+			identifier: method.notFound
+			count: 7
+			path: app/Services/FreightWorkflowService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:recordActivity\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/FreightWorkflowService.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 5
+			path: app/Services/FreightWorkflowService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/IncidentService.php
+
+		-
+			message: '#^Method App\\Services\\IncidentService\:\:create\(\) should return App\\Models\\Incident but returns Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/IncidentService.php
+
+		-
+			message: '#^Parameter \#1 \$incident of class App\\Events\\SosTriggered constructor expects App\\Models\\Incident, Illuminate\\Database\\Eloquent\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/IncidentService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ReportExportService.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: string$#'
+			identifier: match.unhandled
+			count: 1
+			path: app/Services/ReportExportService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/ReportExportService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Freight\:\:\$freights\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Freight\:\:\$revenue\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:financial\(\) should return array\{period\: array\{from\: string, to\: string\}, summary\: array\{freight_count\: int, revenue\: float, distance_km\: float, avg_value\: float\}, by_driver\: Illuminate\\Support\\Collection\<int, array\{driver_id\: int, driver_name\: string\|null, freights\: int, revenue\: float\}\>\} but returns array\{period\: array\{from\: string, to\: string\}, summary\: array\{freight_count\: int, revenue\: float, distance_km\: float, avg_value\: float\}, by_driver\: Illuminate\\Support\\Collection\<int, array\{driver_id\: mixed, driver_name\: string\|null, freights\: int, revenue\: float\}\>\}\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Cannot call method label\(\) on string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Services/TrailerService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:recordActivity\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: app/Services/WaypointService.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:waypoints\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/WaypointService.php
+
+		-
+			message: '#^Cannot access property \$value on string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Services/WaypointService.php

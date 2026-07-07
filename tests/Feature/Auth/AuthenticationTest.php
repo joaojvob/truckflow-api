@@ -9,7 +9,6 @@ use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
 {
-
     protected Tenant $tenant;
 
     protected function setUp(): void

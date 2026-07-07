@@ -19,7 +19,7 @@ trait LogsActivity
      */
     public function recordActivity(string $action, string $description, array $payload = []): void
     {
-        $tenantId = Auth::user()?->tenant_id ?? ($this->tenant_id ?? null);
+        $tenantId = Auth::user()?->tenant_id ?? $this->tenant_id ?? null;
 
         if ($tenantId === null) {
             return;

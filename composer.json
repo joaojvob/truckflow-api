@@ -1,13 +1,17 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "joaojvob/truckflow-api",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "API REST SaaS multi-tenant para gestão de frotas e logística rodoviária.",
     "keywords": [
         "laravel",
-        "framework"
+        "logistics",
+        "fleet-management",
+        "postgis",
+        "multi-tenant",
+        "truckflow"
     ],
-    "license": "MIT",
+    "license": "proprietary",
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
@@ -20,6 +24,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
@@ -55,6 +60,17 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "lint": [
+            "@php ./vendor/bin/pint --test app tests routes"
+        ],
+        "analyse": [
+            "@php ./vendor/bin/phpstan analyse --memory-limit=512M"
+        ],
+        "quality": [
+            "@lint",
+            "@analyse",
+            "@test"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

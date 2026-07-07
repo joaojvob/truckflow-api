@@ -61,7 +61,7 @@ class TenantController extends Controller
      */
     public function update(UpdateTenantRequest $request): JsonResponse
     {
-        $user   = auth()->user();
+        $user = auth()->user();
         $tenant = $user->tenant;
 
         if (! $tenant) {

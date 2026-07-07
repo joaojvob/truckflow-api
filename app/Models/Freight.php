@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Freight extends Model
 {
-    use HasFactory, BelongsToTenant, ExtractsGeographyCoordinates, LogsActivity;
+    use BelongsToTenant, ExtractsGeographyCoordinates, HasFactory, LogsActivity;
 
     protected $fillable = [
         'tenant_id',
@@ -168,8 +168,8 @@ class Freight extends Model
     public function calculateTotalPrice(): float
     {
         $distancePrice = ($this->price_per_km ?? 0) * ($this->distance_km ?? 0);
-        $weightPrice   = ($this->price_per_ton ?? 0) * ($this->weight ?? 0);
-        $costs         = ($this->toll_cost ?? 0) + ($this->fuel_cost ?? 0);
+        $weightPrice = ($this->price_per_ton ?? 0) * ($this->weight ?? 0);
+        $costs = ($this->toll_cost ?? 0) + ($this->fuel_cost ?? 0);
 
         return $distancePrice + $weightPrice + $costs;
     }

@@ -22,9 +22,9 @@ class UploadDocumentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'file.required' => 'O arquivo do documento é obrigatório.',
-            'file.mimes'    => 'O arquivo deve ser PDF, JPG, JPEG ou PNG.',
-            'file.max'      => 'O arquivo pode ter no máximo 10MB.',
+            'file.required'     => 'O arquivo do documento é obrigatório.',
+            'file.mimes'        => 'O arquivo deve ser PDF, JPG, JPEG ou PNG.',
+            'file.max'          => 'O arquivo pode ter no máximo 10MB.',
             'crlv_expiry.after' => 'A validade do CRLV deve ser uma data futura.',
         ];
     }

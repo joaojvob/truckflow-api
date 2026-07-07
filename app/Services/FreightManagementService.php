@@ -29,8 +29,8 @@ class FreightManagementService
         return DB::transaction(function () use ($data) {
             $originLat = $data['origin_lat'];
             $originLng = $data['origin_lng'];
-            $destLat   = $data['destination_lat'];
-            $destLng   = $data['destination_lng'];
+            $destLat = $data['destination_lat'];
+            $destLng = $data['destination_lng'];
 
             $freight = Freight::create([
                 'tenant_id'              => auth()->user()->tenant_id,

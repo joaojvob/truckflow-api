@@ -4,11 +4,11 @@ namespace App\Enums;
 
 enum PlaceType: string
 {
-    case GasStation   = 'gas_station';
-    case Restaurant   = 'restaurant';
-    case RestStop     = 'rest_stop';
-    case Lodging      = 'lodging';
-    case CarRepair    = 'car_repair';
+    case GasStation = 'gas_station';
+    case Restaurant = 'restaurant';
+    case RestStop = 'rest_stop';
+    case Lodging = 'lodging';
+    case CarRepair = 'car_repair';
 
     public function label(): string
     {

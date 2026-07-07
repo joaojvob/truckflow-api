@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DriverProfile extends Model
 {
-    use HasFactory, BelongsToTenant;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
         'user_id',
@@ -34,10 +34,10 @@ class DriverProfile extends Model
     protected function casts(): array
     {
         return [
-            'birth_date'   => 'date',
+            'birth_date'      => 'date',
             'cnh_expiry'      => 'date',
             'cnh_uploaded_at' => 'datetime',
-            'is_available' => 'boolean',
+            'is_available'    => 'boolean',
         ];
     }
 

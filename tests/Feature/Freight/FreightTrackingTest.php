@@ -13,7 +13,6 @@ use Tests\TestCase;
 
 class FreightTrackingTest extends TestCase
 {
-
     protected Tenant $tenant;
 
     protected User $driver;
@@ -28,8 +27,8 @@ class FreightTrackingTest extends TestCase
 
         Event::fake([DriverLocationUpdated::class]);
 
-        $this->tenant  = Tenant::factory()->create();
-        $this->driver  = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
+        $this->tenant = Tenant::factory()->create();
+        $this->driver = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
         $this->manager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);
         $this->freight = Freight::factory()->inTransit()->create([
             'tenant_id'  => $this->tenant->id,

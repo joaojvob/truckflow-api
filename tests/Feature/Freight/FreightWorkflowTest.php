@@ -10,7 +10,6 @@ use App\Models\Freight;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
@@ -18,18 +17,19 @@ use Tests\TestCase;
 
 class FreightWorkflowTest extends TestCase
 {
-
     protected Tenant $tenant;
+
     protected User $manager;
+
     protected User $driver;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tenant  = Tenant::factory()->create();
+        $this->tenant = Tenant::factory()->create();
         $this->manager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);
-        $this->driver  = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
+        $this->driver = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
 
         // Vincular motorista ao gestor
         $this->manager->drivers()->attach($this->driver->id, ['tenant_id' => $this->tenant->id]);
@@ -197,7 +197,7 @@ class FreightWorkflowTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('freights', [
-            'id'             => $freight->id,
+            'id'              => $freight->id,
             'doping_approved' => true,
         ]);
 

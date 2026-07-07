@@ -36,7 +36,7 @@ class FreightService
 
             if ($failedItems->isNotEmpty()) {
                 throw ValidationException::withMessages([
-                    'checklist' => 'Itens do checklist reprovados: ' . $failedItems->implode(', '),
+                    'checklist' => 'Itens do checklist reprovados: '.$failedItems->implode(', '),
                 ]);
             }
 

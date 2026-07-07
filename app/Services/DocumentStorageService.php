@@ -100,7 +100,6 @@ class DocumentStorageService
      *
      * @param  string|null  $path  Caminho relativo no storage.
      * @param  string  $filename  Nome sugerido ao navegador (ex.: cnh-5.pdf).
-     * @return StreamedResponse
      *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException 404 se o arquivo não existir.
      */

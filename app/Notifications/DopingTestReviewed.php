@@ -23,15 +23,15 @@ class DopingTestReviewed extends Notification implements ShouldQueue
 
     public function toArray(object $notifiable): array
     {
-        $status  = $this->dopingTest->isApproved() ? 'aprovado' : 'reprovado';
-        $emoji   = $this->dopingTest->isApproved() ? '✅' : '❌';
+        $status = $this->dopingTest->isApproved() ? 'aprovado' : 'reprovado';
+        $emoji = $this->dopingTest->isApproved() ? '✅' : '❌';
 
         return [
-            'type'        => 'doping_test_reviewed',
-            'freight_id'  => $this->dopingTest->freight_id,
-            'status'      => $this->dopingTest->status->value,
-            'notes'       => $this->dopingTest->reviewer_notes,
-            'message'     => "{$emoji} Seu exame de doping foi {$status}.",
+            'type'       => 'doping_test_reviewed',
+            'freight_id' => $this->dopingTest->freight_id,
+            'status'     => $this->dopingTest->status->value,
+            'notes'      => $this->dopingTest->reviewer_notes,
+            'message'    => "{$emoji} Seu exame de doping foi {$status}.",
         ];
     }
 }

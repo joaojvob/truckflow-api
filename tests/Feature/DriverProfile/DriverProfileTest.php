@@ -10,8 +10,8 @@ use Tests\TestCase;
 
 class DriverProfileTest extends TestCase
 {
-
     protected Tenant $tenant;
+
     protected User $driver;
 
     protected function setUp(): void
@@ -54,17 +54,17 @@ class DriverProfileTest extends TestCase
         Sanctum::actingAs($this->driver);
 
         $payload = [
-            'phone'                  => '(11) 99999-8888',
-            'cpf'                    => '111.222.333-44',
-            'birth_date'             => '1990-05-15',
-            'cnh_number'             => '12345678900',
-            'cnh_category'           => 'E',
-            'cnh_expiry'             => '2027-12-31',
-            'address'                => 'Rua Teste, 123',
-            'city'                   => 'São Paulo',
-            'state'                  => 'SP',
-            'zip_code'               => '01001-000',
-            'emergency_contact_name' => 'Maria',
+            'phone'                   => '(11) 99999-8888',
+            'cpf'                     => '111.222.333-44',
+            'birth_date'              => '1990-05-15',
+            'cnh_number'              => '12345678900',
+            'cnh_category'            => 'E',
+            'cnh_expiry'              => '2027-12-31',
+            'address'                 => 'Rua Teste, 123',
+            'city'                    => 'São Paulo',
+            'state'                   => 'SP',
+            'zip_code'                => '01001-000',
+            'emergency_contact_name'  => 'Maria',
             'emergency_contact_phone' => '(11) 98888-7777',
         ];
 

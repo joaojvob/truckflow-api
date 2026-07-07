@@ -11,20 +11,22 @@ use Tests\TestCase;
 
 class FreightCrudTest extends TestCase
 {
-
     protected Tenant $tenant;
+
     protected User $admin;
+
     protected User $manager;
+
     protected User $driver;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tenant  = Tenant::factory()->create();
-        $this->admin   = User::factory()->admin()->create(['tenant_id' => $this->tenant->id]);
+        $this->tenant = Tenant::factory()->create();
+        $this->admin = User::factory()->admin()->create(['tenant_id' => $this->tenant->id]);
         $this->manager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);
-        $this->driver  = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
+        $this->driver = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
     }
 
     // ─── Index ────────────────────────────────────────────────

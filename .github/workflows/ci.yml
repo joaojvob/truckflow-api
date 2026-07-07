@@ -7,8 +7,30 @@ on:
     branches: [main]
 
 jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_pgsql, bcmath
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Run Pint (style check)
+        run: ./vendor/bin/pint --test app tests routes
+
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan analyse --memory-limit=512M
+
   tests:
     runs-on: ubuntu-latest
+    needs: quality
 
     services:
       postgres:

@@ -47,8 +47,8 @@ class ReportService
 
         return [
             'freights' => [
-                'total'      => (clone $query)->count(),
-                'active'     => (clone $query)->whereIn('status', [
+                'total'  => (clone $query)->count(),
+                'active' => (clone $query)->whereIn('status', [
                     FreightStatus::Assigned,
                     FreightStatus::Accepted,
                     FreightStatus::Ready,
@@ -59,7 +59,7 @@ class ReportService
                 'by_status'  => $statusCounts,
             ],
             'financial' => [
-                'revenue_total'     => (float) ((clone $completedQuery)->sum('total_price') ?? 0),
+                'revenue_total'      => (float) ((clone $completedQuery)->sum('total_price') ?? 0),
                 'revenue_this_month' => (float) ((clone $completedQuery)
                     ->whereMonth('completed_at', now()->month)
                     ->whereYear('completed_at', now()->year)
@@ -86,7 +86,7 @@ class ReportService
     {
         $user = auth()->user();
         $from = isset($filters['from']) ? Carbon::parse($filters['from'])->startOfDay() : now()->startOfMonth();
-        $to   = isset($filters['to']) ? Carbon::parse($filters['to'])->endOfDay() : now()->endOfDay();
+        $to = isset($filters['to']) ? Carbon::parse($filters['to'])->endOfDay() : now()->endOfDay();
 
         $query = Freight::query()
             ->where('status', FreightStatus::Completed)

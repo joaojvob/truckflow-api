@@ -11,9 +11,10 @@ use Tests\TestCase;
 
 class TrailerCrudTest extends TestCase
 {
-
     protected Tenant $tenant;
+
     protected User $admin;
+
     protected User $driver;
 
     protected function setUp(): void
@@ -21,7 +22,7 @@ class TrailerCrudTest extends TestCase
         parent::setUp();
 
         $this->tenant = Tenant::factory()->create();
-        $this->admin  = User::factory()->admin()->create(['tenant_id' => $this->tenant->id]);
+        $this->admin = User::factory()->admin()->create(['tenant_id' => $this->tenant->id]);
         $this->driver = User::factory()->driver()->create(['tenant_id' => $this->tenant->id]);
     }
 

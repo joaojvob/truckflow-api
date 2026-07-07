@@ -2,17 +2,18 @@
 
 namespace App\Services;
 
+use App\Contracts\RoutingProvider;
 use App\Enums\FreightStatus;
 use App\Models\Freight;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Calcula e persiste rotas de fretes via Google Directions API.
+ * Calcula e persiste rotas de fretes via provedor de roteamento configurável.
  */
 class FreightRouteService
 {
     public function __construct(
-        protected GoogleMapsService $googleMapsService,
+        protected RoutingProvider $routingProvider,
     ) {}
 
     /**
@@ -48,7 +49,7 @@ class FreightRouteService
             ->values()
             ->all();
 
-        $route = $this->googleMapsService->getDirections(
+        $route = $this->routingProvider->getDirections(
             originLat: $origin['lat'],
             originLng: $origin['lng'],
             destinationLat: $destination['lat'],

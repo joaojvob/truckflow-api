@@ -4,14 +4,14 @@ namespace App\Enums;
 
 enum FreightStatus: string
 {
-    case Pending   = 'pending';
-    case Assigned  = 'assigned';
-    case Accepted  = 'accepted';
-    case Ready     = 'ready';
+    case Pending = 'pending';
+    case Assigned = 'assigned';
+    case Accepted = 'accepted';
+    case Ready = 'ready';
     case InTransit = 'in_transit';
     case Completed = 'completed';
     case Cancelled = 'cancelled';
-    case Rejected  = 'rejected';
+    case Rejected = 'rejected';
 
     public function label(): string
     {

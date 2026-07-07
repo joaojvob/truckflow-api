@@ -26,7 +26,7 @@ class FreightDriverResponded extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         $driverName = $this->freight->driver->name;
-        $status     = $this->accepted ? 'aceitou' : 'recusou';
+        $status = $this->accepted ? 'aceitou' : 'recusou';
 
         return [
             'type'        => 'freight_driver_responded',

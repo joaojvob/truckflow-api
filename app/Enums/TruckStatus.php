@@ -4,10 +4,10 @@ namespace App\Enums;
 
 enum TruckStatus: string
 {
-    case Available   = 'available';
-    case InUse       = 'in_use';
+    case Available = 'available';
+    case InUse = 'in_use';
     case Maintenance = 'maintenance';
-    case Inactive    = 'inactive';
+    case Inactive = 'inactive';
 
     public function label(): string
     {
