@@ -1,0 +1,29 @@
+# Stack opcional: API Laravel + microserviço Java fiscal (CT-e mock)
+#
+# Uso:
+#   docker compose -f compose.yaml -f docker-compose.fiscal.yml up -d
+#
+# No .env da API:
+#   FISCAL_DRIVER=java
+#   FISCAL_JAVA_SERVICE_URL=http://truckflow-fiscal:8082
+
+services:
+  truckflow-fiscal:
+    build:
+      context: ../truckflow-fiscal
+      dockerfile: Dockerfile
+    ports:
+      - '${FISCAL_SERVICE_PORT:-8082}:8082'
+    environment:
+      SERVER_PORT: 8082
+    networks:
+      - sail
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:8082/actuator/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  sail:
+    external: true

@@ -94,6 +94,11 @@ class Freight extends Model
 
     // ─── Relationships ────────────────────────────────────────
 
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
     public function driver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'driver_id');
@@ -122,6 +127,11 @@ class Freight extends Model
     public function incidents(): HasMany
     {
         return $this->hasMany(Incident::class);
+    }
+
+    public function fiscalDocuments(): HasMany
+    {
+        return $this->hasMany(FreightFiscalDocument::class);
     }
 
     public function dopingTests(): HasMany

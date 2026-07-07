@@ -48,6 +48,7 @@ Backend SaaS multi-tenant construído com Laravel 12 e PostgreSQL + PostGIS. **A
 | **API v2** | ✅ Concluído | Places, GPS em tempo real, WebSocket (Reverb), relatórios |
 | **Observabilidade** | ✅ Concluído | System logs, telemetria admin, PHPStan + Pint no CI |
 | **Geo Java (opcional)** | ✅ Esqueleto | `truckflow-geo` — Spring Boot + `RoutingProvider` |
+| **Fiscal CT-e (mock)** | ✅ MVP | `truckflow-fiscal` — emissão mock XML + DACTE |
 
 > Este repositório contém **somente o backend**. Não há Vite, npm, React nem Flutter aqui — apenas a API consumível via HTTP com token Sanctum.
 
@@ -324,6 +325,31 @@ docker compose -f compose.yaml -f docker-compose.geo.yml up -d
 | **Geocoding API** | Cliente ou backend | Converter endereço ↔ coordenadas |
 
 > Crédito gratuito de **US$ 200/mês** no Google Maps Platform — suficiente para desenvolvimento e aprendizado.
+
+### CT-e (Conhecimento de Transporte Eletrônico) — Mock
+
+Após concluir um frete, o gestor pode emitir **CT-e** via microserviço Java [`truckflow-fiscal`](../truckflow-fiscal):
+
+```env
+FISCAL_DRIVER=java
+FISCAL_JAVA_SERVICE_URL=http://truckflow-fiscal:8082
+```
+
+```bash
+# Subir API + serviço fiscal
+docker compose -f compose.yaml -f docker-compose.fiscal.yml up -d
+```
+
+| Endpoint API | Descrição |
+|--------------|-----------|
+| `PUT /api/v1/tenant/fiscal` | Configura CNPJ, IE, razão social (admin) |
+| `POST /api/v1/freights/{id}/fiscal-documents/cte` | Emite CT-e mock |
+| `GET /api/v1/freights/{id}/fiscal-documents` | Lista documentos |
+| `GET .../fiscal-documents/{doc}/xml` | Download XML |
+| `GET .../fiscal-documents/{doc}/pdf` | Download DACTE (PDF) |
+| `POST .../fiscal-documents/{doc}/cancel` | Cancela CT-e autorizado |
+
+> Emissão mock — sem transmissão à SEFAZ. XML e PDF são gerados para desenvolvimento e testes.
 
 ### Rotas com Waypoints (Pontos de Parada)
 
@@ -958,6 +984,7 @@ O CI (GitHub Actions) executa Pint, PHPStan e testes em jobs separados.
 | [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | C4, ADRs, bounded contexts, integração Java |
 | [docs/FRONTEND-WEB-BRIEF.md](./docs/FRONTEND-WEB-BRIEF.md) | Handoff para painel React |
 | [truckflow-geo](../truckflow-geo/README.md) | Microserviço Spring Boot (geo) |
+| [truckflow-fiscal](../truckflow-fiscal/README.md) | Microserviço Spring Boot (CT-e mock) |
 | `/docs/api` | OpenAPI interativa (Scramble) |
 | `UnitTest` | 1 | Unit test básico |
 
@@ -1001,6 +1028,7 @@ O CI (GitHub Actions) executa Pint, PHPStan e testes em jobs separados.
 - [x] PHPStan + Pint no CI
 - [x] Testes de isolamento cross-tenant
 - [x] `RoutingProvider` + esqueleto `truckflow-geo` (Java)
+- [x] CT-e mock + `truckflow-fiscal` (Java) + endpoints fiscais na API
 
 ### 🔜 Próximas Iterações (backend)
 

@@ -23,7 +23,7 @@ return [
     ],
 
     'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
+        'key'    => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
@@ -31,7 +31,7 @@ return [
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
-            'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
+            'channel'              => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
 
@@ -51,6 +51,19 @@ return [
     'geo' => [
         'driver'   => env('GEO_ROUTING_DRIVER', 'google_maps'),
         'java_url' => env('GEO_JAVA_SERVICE_URL', 'http://truckflow-geo:8081'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Microserviço fiscal (CT-e)
+    |--------------------------------------------------------------------------
+    |
+    | java — truckflow-fiscal (Spring Boot), emissão mock de CT-e
+    |
+    */
+    'fiscal' => [
+        'driver'   => env('FISCAL_DRIVER', 'java'),
+        'java_url' => env('FISCAL_JAVA_SERVICE_URL', 'http://truckflow-fiscal:8082'),
     ],
 
 ];

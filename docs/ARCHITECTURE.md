@@ -238,7 +238,50 @@ GEO_JAVA_SERVICE_URL=http://truckflow-geo:8081
 
 ---
 
-## 8. Observabilidade
+## 8. Integração truckflow-api ↔ truckflow-fiscal (CT-e mock)
+
+### Emitir CT-e
+
+```http
+POST /api/v1/cte/emit
+Content-Type: application/json
+
+{
+  "freight_id": 42,
+  "cargo_name": "Soja em grãos",
+  "cargo_weight": 25.5,
+  "total_value": 3500.00,
+  "issuer": {
+    "cnpj": "12345678000199",
+    "ie": "123456789",
+    "razao_social": "Transportadora Teste LTDA",
+    "uf": "SP",
+    "municipio": "São Paulo"
+  }
+}
+```
+
+### Fluxo na API Laravel
+
+1. Admin configura dados fiscais: `PUT /api/v1/tenant/fiscal`
+2. Gestor emite CT-e após frete concluído: `POST /api/v1/freights/{id}/fiscal-documents/cte`
+3. XML/PDF armazenados em disco privado; download via endpoints dedicados
+4. Cancelamento: `POST /api/v1/freights/{id}/fiscal-documents/{doc}/cancel`
+
+### Subir stack fiscal
+
+```bash
+docker compose -f compose.yaml -f docker-compose.fiscal.yml up -d
+```
+
+```env
+FISCAL_DRIVER=java
+FISCAL_JAVA_SERVICE_URL=http://truckflow-fiscal:8082
+```
+
+---
+
+## 9. Observabilidade
 
 | Tipo | Tabela / Canal | Público |
 |------|----------------|---------|
@@ -251,7 +294,7 @@ Endpoints admin: `/api/v1/admin/*` (role `admin`).
 
 ---
 
-## 9. Qualidade de código
+## 10. Qualidade de código
 
 | Ferramenta | Comando | CI |
 |------------|---------|-----|
@@ -261,13 +304,13 @@ Endpoints admin: `/api/v1/admin/*` (role `admin`).
 
 ---
 
-## 10. Roadmap técnico
+## 11. Roadmap técnico
 
 - [ ] OpenTelemetry + export para Grafana
 - [ ] Outbox pattern para eventos de domínio
 - [ ] `truckflow-web` consumindo API + Reverb
 - [ ] Serviço Java de ingestão GPS (Kafka) em alto volume
-- [ ] Integração ANTT/RNTRC (novo bounded context Java)
+- [ ] Integração CT-e real com SEFAZ (certificado A1, ambiente produção)
 
 ---
 
@@ -276,4 +319,5 @@ Endpoints admin: `/api/v1/admin/*` (role `admin`).
 - [README principal](../README.md)
 - [Brief frontend web](./FRONTEND-WEB-BRIEF.md)
 - [truckflow-geo README](../../truckflow-geo/README.md)
+- [truckflow-fiscal README](../../truckflow-fiscal/README.md)
 - OpenAPI: `http://localhost/docs/api`

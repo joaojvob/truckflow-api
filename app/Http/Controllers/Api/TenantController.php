@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTenantRequest;
+use App\Http\Requests\UpdateTenantFiscalRequest;
 use App\Http\Requests\UpdateTenantRequest;
 use App\Http\Resources\TenantResource;
 use App\Models\Tenant;
@@ -81,6 +82,35 @@ class TenantController extends Controller
         return response()->json([
             'data'    => TenantResource::make($tenant),
             'message' => 'Empresa atualizada com sucesso!',
+        ]);
+    }
+
+    /**
+     * Configura dados fiscais da empresa para emissão de CT-e (somente admin).
+     * PUT /tenant/fiscal
+     */
+    public function updateFiscal(UpdateTenantFiscalRequest $request): JsonResponse
+    {
+        $user = auth()->user();
+        $tenant = $user->tenant;
+
+        if (! $tenant) {
+            return response()->json([
+                'message' => 'Você não está vinculado a nenhuma empresa.',
+            ], 404);
+        }
+
+        if ($user->role->value !== 'admin') {
+            return response()->json([
+                'message' => 'Somente administradores podem configurar dados fiscais.',
+            ], 403);
+        }
+
+        $tenant = $this->tenantService->updateFiscalSettings($tenant, $request->validated());
+
+        return response()->json([
+            'data'    => TenantResource::make($tenant),
+            'message' => 'Dados fiscais atualizados com sucesso!',
         ]);
     }
 }

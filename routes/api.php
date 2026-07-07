@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Admin\AdminPanelController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DriverProfileController;
 use App\Http\Controllers\Api\FreightController;
+use App\Http\Controllers\Api\FreightFiscalController;
 use App\Http\Controllers\Api\FreightPlaceController;
 use App\Http\Controllers\Api\FreightRouteController;
 use App\Http\Controllers\Api\FreightTrackingController;
@@ -36,6 +37,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/tenant', [TenantController::class, 'store']);
     Route::get('/tenant', [TenantController::class, 'show']);
     Route::put('/tenant', [TenantController::class, 'update']);
+    Route::put('/tenant/fiscal', [TenantController::class, 'updateFiscal']);
 
     // Perfil do Motorista
     Route::get('/driver-profile', [DriverProfileController::class, 'show']);
@@ -81,6 +83,14 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::post('/approve', [FreightWorkflowController::class, 'approve']);
         Route::post('/start', [FreightWorkflowController::class, 'start']);
         Route::post('/complete', [FreightWorkflowController::class, 'complete']);
+
+        // Documentos fiscais (CT-e)
+        Route::get('/fiscal-documents', [FreightFiscalController::class, 'index']);
+        Route::post('/fiscal-documents/cte', [FreightFiscalController::class, 'emitCte']);
+        Route::get('/fiscal-documents/{fiscalDocument}', [FreightFiscalController::class, 'show']);
+        Route::post('/fiscal-documents/{fiscalDocument}/cancel', [FreightFiscalController::class, 'cancel']);
+        Route::get('/fiscal-documents/{fiscalDocument}/xml', [FreightFiscalController::class, 'downloadXml']);
+        Route::get('/fiscal-documents/{fiscalDocument}/pdf', [FreightFiscalController::class, 'downloadPdf']);
     });
 
     // Incidentes / SOS

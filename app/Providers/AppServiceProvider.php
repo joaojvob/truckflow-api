@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Contracts\FiscalDocumentProvider;
 use App\Contracts\RoutingProvider;
 use App\Services\GoogleMapsService;
+use App\Services\JavaFiscalDocumentProvider;
 use App\Services\JavaGeoRoutingProvider;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -24,6 +26,13 @@ class AppServiceProvider extends ServiceProvider
             return match (config('services.geo.driver')) {
                 'java'  => $this->app->make(JavaGeoRoutingProvider::class),
                 default => $this->app->make(GoogleMapsService::class),
+            };
+        });
+
+        $this->app->bind(FiscalDocumentProvider::class, function () {
+            return match (config('services.fiscal.driver')) {
+                'java'  => $this->app->make(JavaFiscalDocumentProvider::class),
+                default => $this->app->make(JavaFiscalDocumentProvider::class),
             };
         });
     }

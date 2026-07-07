@@ -50,4 +50,19 @@ class TenantService
 
         return $tenant->fresh();
     }
+
+    /**
+     * Atualiza configurações fiscais do tenant (CNPJ, IE, razão social).
+     *
+     * @param  array{cnpj: string, ie: string, razao_social: string, uf: string, municipio: string}  $fiscal
+     */
+    public function updateFiscalSettings(Tenant $tenant, array $fiscal): Tenant
+    {
+        $settings = $tenant->settings ?? [];
+        $settings['fiscal'] = $fiscal;
+
+        $tenant->update(['settings' => $settings]);
+
+        return $tenant->fresh();
+    }
 }

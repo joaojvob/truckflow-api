@@ -114,4 +114,20 @@ class FreightPolicy
     {
         return $user->isAdmin() || $user->isManager();
     }
+
+    /**
+     * Emitir/cancelar CT-e — admin ou gestor responsável pelo frete.
+     */
+    public function emitFiscal(User $user, Freight $freight): bool
+    {
+        return $this->update($user, $freight);
+    }
+
+    /**
+     * Visualizar documentos fiscais do frete.
+     */
+    public function viewFiscal(User $user, Freight $freight): bool
+    {
+        return $this->view($user, $freight);
+    }
 }
