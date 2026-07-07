@@ -3,19 +3,25 @@
 namespace App\Services;
 
 use App\Enums\TruckStatus;
-use App\Models\Trailer;
 use App\Models\Truck;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Cadastro, status e documentação (CRLV) de caminhões da frota.
+ */
 class TruckService
 {
     public function __construct(
         protected DocumentStorageService $documentStorage,
     ) {}
+
     /**
-     * Registra um novo caminhão.
+     * Registra um novo caminhão no tenant do usuário autenticado.
+     *
+     * @param  array<string, mixed>  $data  Placa, marca, modelo, capacidade e demais campos validados.
+     * @return Truck Caminhão criado com status `available`.
      */
     public function create(array $data): Truck
     {
@@ -47,7 +53,11 @@ class TruckService
     }
 
     /**
-     * Atualiza os dados de um caminhão.
+     * Atualiza dados cadastrais do caminhão.
+     *
+     * @param  Truck  $truck  Caminhão a editar.
+     * @param  array<string, mixed>  $data  Campos validados.
+     * @return Truck Caminhão atualizado.
      */
     public function update(Truck $truck, array $data): Truck
     {
@@ -69,9 +79,13 @@ class TruckService
     }
 
     /**
-     * Altera o status de um caminhão.
+     * Altera o status operacional do caminhão.
      *
-     * @throws ValidationException
+     * @param  Truck  $truck  Caminhão a atualizar.
+     * @param  TruckStatus  $newStatus  Novo status (available, in_use, maintenance, etc.).
+     * @return Truck Caminhão com status atualizado.
+     *
+     * @throws ValidationException Status igual ao atual ou frete em trânsito impedindo disponibilidade.
      */
     public function updateStatus(Truck $truck, TruckStatus $newStatus): Truck
     {
@@ -99,7 +113,11 @@ class TruckService
     }
 
     /**
-     * Atribui ou reatribui um motorista ao caminhão.
+     * Vincula ou desvincula um motorista ao caminhão.
+     *
+     * @param  Truck  $truck  Caminhão alvo.
+     * @param  int|null  $driverId  ID do motorista ou null para remover vínculo.
+     * @return Truck Caminhão com relação `driver` carregada.
      */
     public function assignDriver(Truck $truck, ?int $driverId): Truck
     {
@@ -116,7 +134,12 @@ class TruckService
     }
 
     /**
-     * Anexa ou substitui o CRLV do caminhão.
+     * Anexa ou substitui o CRLV no storage privado.
+     *
+     * @param  Truck  $truck  Caminhão dono do documento.
+     * @param  UploadedFile  $file  Imagem ou PDF do CRLV.
+     * @param  string|null  $crlvExpiry  Data de validade (formato aceito pelo banco).
+     * @return Truck Caminhão com campos de CRLV atualizados.
      */
     public function uploadCrlv(Truck $truck, UploadedFile $file, ?string $crlvExpiry = null): Truck
     {

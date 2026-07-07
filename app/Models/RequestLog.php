@@ -2,24 +2,26 @@
 
 namespace App\Models;
 
+use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class ActivityLog extends Model
+class RequestLog extends Model
 {
+    use BelongsToTenant;
+
     protected $fillable = [
         'tenant_id',
         'user_id',
+        'request_id',
+        'method',
+        'route_name',
+        'uri',
         'action',
-        'description',
-        'auditable_type',
-        'auditable_id',
-        'payload',
-    ];
-
-    protected $casts = [
-        'payload' => 'array',
+        'status_code',
+        'duration_ms',
+        'ip',
+        'user_agent',
     ];
 
     public function user(): BelongsTo
@@ -30,13 +32,5 @@ class ActivityLog extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
-    }
-
-    /**
-     * Relacionamento polimórfico (pode ser Freight, User, etc).
-     */
-    public function auditable(): MorphTo
-    {
-        return $this->morphTo();
     }
 }

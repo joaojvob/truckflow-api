@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AdminPanelController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DriverProfileController;
 use App\Http\Controllers\Api\FreightController;
@@ -118,4 +119,14 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/trailers/{trailer}/crlv', [TrailerController::class, 'uploadCrlv']);
     Route::get('/trailers/{trailer}/crlv', [TrailerController::class, 'downloadCrlv']);
     Route::apiResource('trailers', TrailerController::class);
+
+    // Painel administrativo (telemetria, logs, auditoria)
+    Route::prefix('admin')->middleware('admin')->group(function () {
+        Route::get('/telemetry/summary', [AdminPanelController::class, 'summary']);
+        Route::get('/system-logs', [AdminPanelController::class, 'systemLogs']);
+        Route::get('/system-logs/{systemLog}', [AdminPanelController::class, 'showSystemLog']);
+        Route::post('/system-logs/{systemLog}/resolve', [AdminPanelController::class, 'resolveSystemLog']);
+        Route::get('/request-logs', [AdminPanelController::class, 'requestLogs']);
+        Route::get('/activity-logs', [AdminPanelController::class, 'activityLogs']);
+    });
 });

@@ -6,6 +6,9 @@ use App\Enums\FreightStatus;
 use App\Models\Freight;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Calcula e persiste rotas de fretes via Google Directions API.
+ */
 class FreightRouteService
 {
     public function __construct(
@@ -13,7 +16,12 @@ class FreightRouteService
     ) {}
 
     /**
-     * @throws ValidationException
+     * Calcula rota com waypoints, atualiza distância/preço e grava polyline no frete.
+     *
+     * @param  Freight  $freight  Frete com origem, destino e waypoints definidos.
+     * @return Freight Frete atualizado com `route_polyline`, distância e duração.
+     *
+     * @throws ValidationException Frete finalizado/cancelado ou sem coordenadas.
      */
     public function calculate(Freight $freight): Freight
     {
@@ -36,7 +44,7 @@ class FreightRouteService
 
         $waypoints = $freight->waypoints
             ->map(fn ($waypoint) => $waypoint->getCoordinates())
-            ->filter()
+            ->filter(fn (?array $coordinates) => $coordinates !== null && isset($coordinates['lat'], $coordinates['lng']))
             ->values()
             ->all();
 

@@ -8,8 +8,24 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Agrega métricas operacionais e financeiras para dashboards e relatórios.
+ *
+ * O escopo dos dados respeita o papel do usuário: gestor vê fretes que criou,
+ * motorista vê fretes atribuídos, admin vê todo o tenant.
+ */
 class ReportService
 {
+    /**
+     * Monta métricas gerais para o dashboard (fretes, receita, distância).
+     *
+     * @param  User|null  $user  Usuário de referência; usa auth()->user() se omitido.
+     * @return array{
+     *     freights: array{total: int, active: int, in_transit: int, completed: int, by_status: \Illuminate\Support\Collection},
+     *     financial: array{revenue_total: float, revenue_this_month: float, avg_freight_value: float},
+     *     distance: array{km_completed: float}
+     * }
+     */
     public function dashboard(?User $user = null): array
     {
         $user ??= auth()->user();
@@ -56,6 +72,16 @@ class ReportService
         ];
     }
 
+    /**
+     * Gera relatório financeiro detalhado para um período.
+     *
+     * @param  array{from?: string, to?: string}  $filters  Datas ISO; padrão = mês atual.
+     * @return array{
+     *     period: array{from: string, to: string},
+     *     summary: array{freight_count: int, revenue: float, distance_km: float, avg_value: float},
+     *     by_driver: \Illuminate\Support\Collection<int, array{driver_id: int, driver_name: string|null, freights: int, revenue: float}>
+     * }
+     */
     public function financial(array $filters = []): array
     {
         $user = auth()->user();

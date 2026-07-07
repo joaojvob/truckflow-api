@@ -7,13 +7,20 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Cadastro, carga/descarga e documentação (CRLV) de reboques/semirreboques.
+ */
 class TrailerService
 {
     public function __construct(
         protected DocumentStorageService $documentStorage,
     ) {}
+
     /**
-     * Registra um novo reboque/engate.
+     * Registra um novo reboque no tenant do usuário autenticado.
+     *
+     * @param  array<string, mixed>  $data  Placa, tipo, capacidade, engate e demais campos validados.
+     * @return Trailer Reboque criado com status `available`.
      */
     public function create(array $data): Trailer
     {
@@ -45,7 +52,11 @@ class TrailerService
     }
 
     /**
-     * Atualiza os dados de um reboque.
+     * Atualiza dados cadastrais do reboque.
+     *
+     * @param  Trailer  $trailer  Reboque a editar.
+     * @param  array<string, mixed>  $data  Campos validados.
+     * @return Trailer Reboque atualizado.
      */
     public function update(Trailer $trailer, array $data): Trailer
     {
@@ -67,7 +78,11 @@ class TrailerService
     }
 
     /**
-     * Atribui ou reatribui um motorista ao reboque.
+     * Vincula ou desvincula um motorista ao reboque.
+     *
+     * @param  Trailer  $trailer  Reboque alvo.
+     * @param  int|null  $driverId  ID do motorista ou null para remover vínculo.
+     * @return Trailer Reboque com relação `driver` carregada.
      */
     public function assignDriver(Trailer $trailer, ?int $driverId): Trailer
     {
@@ -86,7 +101,11 @@ class TrailerService
     /**
      * Marca o reboque como carregado ou descarregado.
      *
-     * @throws ValidationException
+     * @param  Trailer  $trailer  Reboque alvo.
+     * @param  bool  $isLoaded  true = carregado, false = vazio.
+     * @return Trailer Reboque com flag `is_loaded` atualizada.
+     *
+     * @throws ValidationException Se o estado informado já for o atual.
      */
     public function toggleLoaded(Trailer $trailer, bool $isLoaded): Trailer
     {
@@ -103,7 +122,12 @@ class TrailerService
     }
 
     /**
-     * Anexa ou substitui o CRLV do reboque.
+     * Anexa ou substitui o CRLV no storage privado.
+     *
+     * @param  Trailer  $trailer  Reboque dono do documento.
+     * @param  UploadedFile  $file  Imagem ou PDF do CRLV.
+     * @param  string|null  $crlvExpiry  Data de validade (formato aceito pelo banco).
+     * @return Trailer Reboque com campos de CRLV atualizados.
      */
     public function uploadCrlv(Trailer $trailer, UploadedFile $file, ?string $crlvExpiry = null): Trailer
     {

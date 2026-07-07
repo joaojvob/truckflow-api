@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\LogApiRequest;
+use App\Services\SystemLogger;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,11 +21,37 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
+        $middleware->alias([
+            'admin' => EnsureUserIsAdmin::class,
+        ]);
         $middleware->api(prepend: [
             'throttle:api-tenant',
         ]);
+        $middleware->api(append: [
+            LogApiRequest::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->report(function (Throwable $e): void {
+            if ($e instanceof ValidationException) {
+                return;
+            }
+
+            if ($e instanceof AuthenticationException) {
+                return;
+            }
+
+            if ($e instanceof NotFoundHttpException) {
+                return;
+            }
+
+            try {
+                app(SystemLogger::class)->fromException($e);
+            } catch (Throwable) {
+                // Evita loop se o próprio logger falhar.
+            }
+        });
+
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->expectsJson()) {
                 return response()->json([

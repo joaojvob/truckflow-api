@@ -18,12 +18,23 @@ use App\Notifications\FreightStatusChanged;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Orquestra o workflow completo gestor ↔ motorista (atribuição até conclusão da viagem).
+ *
+ * Cada transição de estado dispara notificações e registros de auditoria.
+ */
 class FreightWorkflowService
 {
     // ─── 1. Gestor atribui frete ao motorista ─────────────────
 
     /**
      * Gestor atribui um frete a um motorista — motorista é notificado.
+     *
+     * @param  Freight  $freight  Frete pendente ou recusado anteriormente.
+     * @param  User  $driver  Motorista do mesmo tenant.
+     * @return Freight Frete com status `assigned`.
+     *
+     * @throws ValidationException Se o frete não aceitar atribuição.
      */
     public function assignDriver(Freight $freight, User $driver): Freight
     {
@@ -58,7 +69,12 @@ class FreightWorkflowService
     // ─── 2. Motorista aceita ou recusa ────────────────────────
 
     /**
-     * Motorista aceita o frete.
+     * Motorista aceita o frete atribuído.
+     *
+     * @param  Freight  $freight  Frete em status `assigned`.
+     * @return Freight Frete com status `accepted`.
+     *
+     * @throws ValidationException Se o motorista já respondeu ou status inválido.
      */
     public function acceptFreight(Freight $freight): Freight
     {
@@ -84,7 +100,13 @@ class FreightWorkflowService
     }
 
     /**
-     * Motorista recusa o frete.
+     * Motorista recusa o frete atribuído.
+     *
+     * @param  Freight  $freight  Frete em status `assigned`.
+     * @param  string|null  $reason  Motivo opcional da recusa.
+     * @return Freight Frete com status `rejected`.
+     *
+     * @throws ValidationException Se o motorista já respondeu ou status inválido.
      */
     public function rejectFreight(Freight $freight, ?string $reason = null): Freight
     {
@@ -114,7 +136,13 @@ class FreightWorkflowService
     // ─── 3. Motorista envia exame de doping ───────────────────
 
     /**
-     * Motorista envia o exame de doping para um frete.
+     * Motorista envia o exame de doping para um frete aceito.
+     *
+     * @param  Freight  $freight  Frete em status `accepted`.
+     * @param  string  $filePath  Caminho do arquivo no storage privado.
+     * @return DopingTest Registro do exame pendente de análise.
+     *
+     * @throws ValidationException Se o frete não estiver aceito.
      */
     public function submitDopingTest(Freight $freight, string $filePath): DopingTest
     {
@@ -150,7 +178,14 @@ class FreightWorkflowService
     // ─── 4. Gestor aprova/rejeita doping ──────────────────────
 
     /**
-     * Gestor analisa o exame de doping.
+     * Gestor aprova ou reprova o exame de doping.
+     *
+     * @param  DopingTest  $dopingTest  Exame pendente.
+     * @param  bool  $approved  true = aprovado, false = reprovado.
+     * @param  string|null  $notes  Observações do gestor.
+     * @return DopingTest Exame atualizado.
+     *
+     * @throws ValidationException Se o exame já foi analisado.
      */
     public function reviewDopingTest(DopingTest $dopingTest, bool $approved, ?string $notes = null): DopingTest
     {
@@ -190,7 +225,13 @@ class FreightWorkflowService
     // ─── 5. Motorista envia checklist (gestor aprova) ─────────
 
     /**
-     * Motorista envia o checklist pré-viagem — gestor será notificado.
+     * Motorista envia checklist pré-viagem — gestor é notificado.
+     *
+     * @param  Freight  $freight  Frete em status `accepted`.
+     * @param  array<string, bool>  $checklistData  Itens do checklist (pneus, óleo, etc.).
+     * @return Freight Frete com `checklist_completed` = true.
+     *
+     * @throws ValidationException Se o frete não estiver aceito.
      */
     public function submitChecklist(Freight $freight, array $checklistData): Freight
     {
@@ -226,7 +267,12 @@ class FreightWorkflowService
     // ─── 6. Gestor libera a viagem ────────────────────────────
 
     /**
-     * Gestor aprova tudo (doping + checklist) e libera a viagem.
+     * Gestor libera a viagem após doping e checklist aprovados.
+     *
+     * @param  Freight  $freight  Frete em status `accepted` com pré-requisitos ok.
+     * @return Freight Frete com status `ready`.
+     *
+     * @throws ValidationException Se doping ou checklist estiverem pendentes.
      */
     public function approveTrip(Freight $freight): Freight
     {
@@ -271,7 +317,12 @@ class FreightWorkflowService
     // ─── 7. Motorista inicia a viagem ─────────────────────────
 
     /**
-     * Motorista inicia a viagem (somente se o gestor liberou).
+     * Motorista inicia a viagem após liberação do gestor.
+     *
+     * @param  Freight  $freight  Frete em status `ready`.
+     * @return Freight Frete com status `in_transit`.
+     *
+     * @throws ValidationException Se pré-requisitos não estiverem completos.
      */
     public function startTrip(Freight $freight): Freight
     {
@@ -314,7 +365,14 @@ class FreightWorkflowService
     // ─── 8. Motorista finaliza a viagem ───────────────────────
 
     /**
-     * Motorista finaliza a viagem.
+     * Motorista finaliza a viagem em trânsito.
+     *
+     * @param  Freight  $freight  Frete em status `in_transit`.
+     * @param  int|null  $rating  Avaliação opcional do frete (1-5).
+     * @param  string|null  $notes  Observações finais do motorista.
+     * @return Freight Frete com status `completed`.
+     *
+     * @throws ValidationException Se o frete não estiver em trânsito.
      */
     public function completeTrip(Freight $freight, ?int $rating = null, ?string $notes = null): Freight
     {
@@ -353,6 +411,13 @@ class FreightWorkflowService
 
     // ─── Helpers ──────────────────────────────────────────────
 
+    /**
+     * Valida se o motorista autenticado pode aceitar/recusar o frete.
+     *
+     * @param  Freight  $freight  Frete a ser respondido.
+     *
+     * @throws ValidationException Status ou resposta inválidos.
+     */
     private function validateDriverCanRespond(Freight $freight): void
     {
         if ($freight->status !== FreightStatus::Assigned) {
@@ -368,6 +433,13 @@ class FreightWorkflowService
         }
     }
 
+    /**
+     * Notifica o gestor criador do frete sobre aceite ou recusa.
+     *
+     * @param  Freight  $freight  Frete respondido.
+     * @param  bool  $accepted  true = aceito, false = recusado.
+     * @param  string|null  $reason  Motivo da recusa.
+     */
     private function notifyManager(Freight $freight, bool $accepted, ?string $reason = null): void
     {
         $creator = $freight->creator;

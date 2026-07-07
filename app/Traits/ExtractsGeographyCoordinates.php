@@ -4,8 +4,17 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Extrai latitude e longitude de colunas PostGIS do tipo geography/point.
+ */
 trait ExtractsGeographyCoordinates
 {
+    /**
+     * Converte uma coluna geography em array associativo lat/lng.
+     *
+     * @param  string  $column  Nome da coluna PostGIS (ex.: origin, destination, location).
+     * @return array{lat: float, lng: float}|null Coordenadas ou null se a coluna estiver vazia.
+     */
     public function coordinatesFromGeography(string $column): ?array
     {
         if (! $this->getAttribute($column)) {

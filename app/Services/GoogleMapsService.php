@@ -6,14 +6,29 @@ use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Cliente HTTP para Google Maps Platform (Directions e Places Nearby Search).
+ *
+ * Requer `GOOGLE_MAPS_API_KEY` em config/services.php.
+ */
 class GoogleMapsService
 {
     private const DIRECTIONS_URL = 'https://maps.googleapis.com/maps/api/directions/json';
 
     private const PLACES_NEARBY_URL = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json';
 
+    public function __construct(
+        protected SystemLogger $systemLogger,
+    ) {}
+
     /**
-     * @param  array<int, array{lat: float, lng: float}>  $waypoints
+     * Consulta a Google Directions API e retorna polyline, distância e duração.
+     *
+     * @param  float  $originLat  Latitude da origem.
+     * @param  float  $originLng  Longitude da origem.
+     * @param  float  $destinationLat  Latitude do destino.
+     * @param  float  $destinationLng  Longitude do destino.
+     * @param  array<int, array{lat: float, lng: float}>  $waypoints  Paradas intermediárias opcionais.
      * @return array{
      *     polyline: string,
      *     distance_meters: int,
@@ -21,7 +36,7 @@ class GoogleMapsService
      *     bounds: array<string, mixed>|null
      * }
      *
-     * @throws ValidationException
+     * @throws ValidationException Chave ausente ou erro na API.
      */
     public function getDirections(
         float $originLat,
@@ -58,6 +73,13 @@ class GoogleMapsService
                 ->get(self::DIRECTIONS_URL, $params)
                 ->throw();
         } catch (RequestException $exception) {
+            $this->systemLogger->warning(
+                'Google Directions API indisponível.',
+                ['channel' => 'google_maps', 'origin' => "{$originLat},{$originLng}"],
+                $exception,
+                'google_maps',
+            );
+
             throw ValidationException::withMessages([
                 'google_maps' => 'Não foi possível consultar a Google Directions API.',
             ]);
@@ -76,13 +98,18 @@ class GoogleMapsService
         $route = $data['routes'][0];
 
         return [
-            'polyline'          => $route['overview_polyline']['points'],
-            'distance_meters'   => (int) collect($route['legs'])->sum('distance.value'),
-            'duration_seconds'  => (int) collect($route['legs'])->sum('duration.value'),
+            'polyline'          => $route['overview_polyline']['points'] ?? '',
+            'distance_meters'   => (int) collect($route['legs'] ?? [])->sum('distance.value'),
+            'duration_seconds'  => (int) collect($route['legs'] ?? [])->sum('duration.value'),
             'bounds'            => $route['bounds'] ?? null,
         ];
     }
 
+    /**
+     * Traduz códigos de status da Directions API para mensagens em português.
+     *
+     * @param  string  $status  Código retornado pela API (ex.: ZERO_RESULTS).
+     */
     private function translateDirectionsStatus(string $status): string
     {
         return match ($status) {
@@ -96,6 +123,12 @@ class GoogleMapsService
     }
 
     /**
+     * Busca estabelecimentos próximos via Google Places Nearby Search.
+     *
+     * @param  float  $lat  Latitude do ponto de referência.
+     * @param  float  $lng  Longitude do ponto de referência.
+     * @param  string  $type  Tipo Google Places (ex.: gas_station, restaurant).
+     * @param  int  $radiusMeters  Raio de busca em metros (padrão: 5000).
      * @return array<int, array{
      *     place_id: string,
      *     name: string,
@@ -106,7 +139,7 @@ class GoogleMapsService
      *     open_now: bool|null
      * }>
      *
-     * @throws ValidationException
+     * @throws ValidationException Chave ausente ou erro na API.
      */
     public function searchNearbyPlaces(
         float $lat,
@@ -134,6 +167,13 @@ class GoogleMapsService
                 ])
                 ->throw();
         } catch (RequestException $exception) {
+            $this->systemLogger->warning(
+                'Google Places API indisponível.',
+                ['channel' => 'google_maps', 'location' => "{$lat},{$lng}", 'type' => $type],
+                $exception,
+                'google_maps',
+            );
+
             throw ValidationException::withMessages([
                 'google_maps' => 'Não foi possível consultar a Google Places API.',
             ]);
@@ -151,11 +191,11 @@ class GoogleMapsService
         return collect($data['results'] ?? [])
             ->take(20)
             ->map(fn (array $place) => [
-                'place_id' => $place['place_id'],
-                'name'     => $place['name'],
+                'place_id' => $place['place_id'] ?? '',
+                'name'     => $place['name'] ?? 'Sem nome',
                 'address'  => $place['vicinity'] ?? null,
-                'lat'      => (float) $place['geometry']['location']['lat'],
-                'lng'      => (float) $place['geometry']['location']['lng'],
+                'lat'      => (float) ($place['geometry']['location']['lat'] ?? 0),
+                'lng'      => (float) ($place['geometry']['location']['lng'] ?? 0),
                 'rating'   => isset($place['rating']) ? (float) $place['rating'] : null,
                 'open_now' => $place['opening_hours']['open_now'] ?? null,
             ])
@@ -163,6 +203,11 @@ class GoogleMapsService
             ->all();
     }
 
+    /**
+     * Traduz códigos de status da Places API para mensagens em português.
+     *
+     * @param  string  $status  Código retornado pela API.
+     */
     private function translatePlacesStatus(string $status): string
     {
         return match ($status) {

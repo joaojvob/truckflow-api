@@ -6,6 +6,11 @@ use App\Enums\PlaceType;
 use App\Models\Freight;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Busca pontos de interesse (postos, restaurantes, etc.) próximos a um frete.
+ *
+ * Delega a consulta à Google Places API via {@see GoogleMapsService}.
+ */
 class PlaceSearchService
 {
     public function __construct(
@@ -13,14 +18,20 @@ class PlaceSearchService
     ) {}
 
     /**
-     * @return array<int, array<string, mixed>>
+     * Busca locais próximos às coordenadas informadas ou à origem do frete.
      *
-     * @throws ValidationException
+     * @param  Freight  $freight  Frete de referência para fallback de coordenadas.
+     * @param  array{lat?: float, lng?: float, type: PlaceType|string, radius_meters?: int}  $data
+     * @return array<int, array{place_id: string, name: string, address: string|null, lat: float, lng: float, rating: float|null, open_now: bool|null}>
+     *
+     * @throws ValidationException Se lat/lng não estiverem disponíveis.
      */
     public function searchNearFreight(Freight $freight, array $data): array
     {
-        $lat = $data['lat'] ?? $freight->getOriginCoordinates()['lat'] ?? null;
-        $lng = $data['lng'] ?? $freight->getOriginCoordinates()['lng'] ?? null;
+        $origin = $freight->getOriginCoordinates();
+
+        $lat = $data['lat'] ?? $origin['lat'] ?? null;
+        $lng = $data['lng'] ?? $origin['lng'] ?? null;
 
         if ($lat === null || $lng === null) {
             throw ValidationException::withMessages([

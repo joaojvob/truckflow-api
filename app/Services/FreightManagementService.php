@@ -6,8 +6,12 @@ use App\Enums\FreightStatus;
 use App\Models\Freight;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
-use App\Services\WaypointService;
 
+/**
+ * CRUD de fretes pelo gestor: criação, edição e cancelamento.
+ *
+ * Waypoints inline na criação são delegados ao {@see WaypointService}.
+ */
 class FreightManagementService
 {
     public function __construct(
@@ -15,7 +19,10 @@ class FreightManagementService
     ) {}
 
     /**
-     * Cria um novo frete com cálculo automático de preço.
+     * Cria um frete com origem/destino PostGIS e cálculo automático de preço.
+     *
+     * @param  array<string, mixed>  $data  Dados validados (coordenadas, carga, motorista, waypoints opcionais).
+     * @return Freight Frete persistido com relações carregadas.
      */
     public function create(array $data): Freight
     {
@@ -54,12 +61,10 @@ class FreightManagementService
                 'enforce_route'          => $data['enforce_route'] ?? false,
             ]);
 
-            // Calcular preço total automaticamente
             $freight->update([
                 'total_price' => $freight->calculateTotalPrice(),
             ]);
 
-            // Criar waypoints se enviados inline
             if (! empty($data['waypoints'])) {
                 $this->waypointService->createBatch($freight, $data['waypoints']);
             }
@@ -79,9 +84,13 @@ class FreightManagementService
     }
 
     /**
-     * Atualiza um frete existente.
+     * Atualiza campos editáveis de um frete e recalcula preço se necessário.
      *
-     * @throws ValidationException
+     * @param  Freight  $freight  Frete não finalizado/cancelado.
+     * @param  array<string, mixed>  $data  Campos a atualizar (coordenadas opcionais).
+     * @return Freight Frete atualizado.
+     *
+     * @throws ValidationException Se o frete estiver concluído ou cancelado.
      */
     public function update(Freight $freight, array $data): Freight
     {
@@ -96,7 +105,6 @@ class FreightManagementService
                 'origin_lat', 'origin_lng', 'destination_lat', 'destination_lng',
             ])->toArray();
 
-            // Atualizar coordenadas se enviadas
             if (isset($data['origin_lat'], $data['origin_lng'])) {
                 $lat = $data['origin_lat'];
                 $lng = $data['origin_lng'];
@@ -111,7 +119,6 @@ class FreightManagementService
 
             $freight->update($updateData);
 
-            // Recalcular preço se algum componente mudou
             if (array_intersect(array_keys($data), ['price_per_km', 'price_per_ton', 'distance_km', 'weight', 'toll_cost', 'fuel_cost'])) {
                 $freight->update(['total_price' => $freight->calculateTotalPrice()]);
             }
@@ -127,9 +134,12 @@ class FreightManagementService
     }
 
     /**
-     * Cancela um frete.
+     * Cancela um frete respeitando as transições válidas de status.
      *
-     * @throws ValidationException
+     * @param  Freight  $freight  Frete elegível para cancelamento.
+     * @return Freight Frete com status `cancelled`.
+     *
+     * @throws ValidationException Se a transição para cancelado não for permitida.
      */
     public function cancel(Freight $freight): Freight
     {

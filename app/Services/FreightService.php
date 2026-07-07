@@ -7,12 +7,21 @@ use App\Models\Freight;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Fluxo legado de início/fim de viagem com checklist embutido.
+ *
+ * Preferir {@see FreightWorkflowService} para o workflow completo gestor ↔ motorista.
+ */
 class FreightService
 {
     /**
-     * Inicia uma viagem após validar o checklist.
+     * Inicia a viagem após validar o checklist pré-viagem.
      *
-     * @throws ValidationException
+     * @param  Freight  $freight  Frete em status `pending`.
+     * @param  array<string, bool>  $checklistData  Itens do checklist (true = ok).
+     * @return Freight Frete com status `in_transit`.
+     *
+     * @throws ValidationException Status inválido ou itens reprovados no checklist.
      */
     public function startTrip(Freight $freight, array $checklistData): Freight
     {
@@ -54,7 +63,12 @@ class FreightService
     /**
      * Finaliza uma viagem em trânsito.
      *
-     * @throws ValidationException
+     * @param  Freight  $freight  Frete em status `in_transit`.
+     * @param  int|null  $rating  Avaliação opcional do frete (1-5).
+     * @param  string|null  $notes  Observações finais do motorista.
+     * @return Freight Frete com status `completed`.
+     *
+     * @throws ValidationException Se o frete não estiver em trânsito.
      */
     public function completeTrip(Freight $freight, ?int $rating = null, ?string $notes = null): Freight
     {

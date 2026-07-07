@@ -10,8 +10,22 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Registra e consulta posições GPS do motorista durante fretes em trânsito.
+ *
+ * Cada registro dispara o evento {@see DriverLocationUpdated} para broadcast via Reverb.
+ */
 class DriverTrackingService
 {
+    /**
+     * Persiste uma nova posição GPS e notifica clientes em tempo real.
+     *
+     * @param  Freight  $freight  Frete em trânsito com motorista atribuído.
+     * @param  array{lat: float, lng: float, speed_kmh?: float, heading?: float, recorded_at?: \Carbon\Carbon|string}  $data
+     * @return DriverLocation Registro criado com geometria PostGIS.
+     *
+     * @throws ValidationException Se o frete não estiver em trânsito ou o usuário não for o motorista.
+     */
     public function record(Freight $freight, array $data): DriverLocation
     {
         if ($freight->status !== FreightStatus::InTransit) {
@@ -44,6 +58,12 @@ class DriverTrackingService
         return $location;
     }
 
+    /**
+     * Retorna a posição mais recente do frete.
+     *
+     * @param  Freight  $freight  Frete monitorado.
+     * @return DriverLocation|null Último registro ou null se nenhum ponto foi enviado.
+     */
     public function latest(Freight $freight): ?DriverLocation
     {
         return $freight->driverLocations()
@@ -51,6 +71,13 @@ class DriverTrackingService
             ->first();
     }
 
+    /**
+     * Lista o histórico de posições ordenado da mais recente para a mais antiga.
+     *
+     * @param  Freight  $freight  Frete monitorado.
+     * @param  int  $limit  Quantidade máxima de registros (padrão: 50).
+     * @return Collection<int, DriverLocation>
+     */
     public function history(Freight $freight, int $limit = 50): Collection
     {
         return $freight->driverLocations()

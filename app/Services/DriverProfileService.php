@@ -8,6 +8,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Gerencia o perfil profissional do motorista e upload da CNH.
+ */
 class DriverProfileService
 {
     public function __construct(
@@ -15,7 +18,11 @@ class DriverProfileService
     ) {}
 
     /**
-     * Cria ou atualiza o perfil do motorista.
+     * Cria ou atualiza os dados cadastrais do motorista.
+     *
+     * @param  User  $user  Motorista autenticado.
+     * @param  array<string, mixed>  $data  Campos validados (CNH, endereço, etc.).
+     * @return DriverProfile Perfil persistido.
      */
     public function createOrUpdate(User $user, array $data): DriverProfile
     {
@@ -30,7 +37,13 @@ class DriverProfileService
     }
 
     /**
-     * Anexa ou substitui o arquivo da CNH do motorista.
+     * Anexa ou substitui o arquivo digital da CNH no storage privado.
+     *
+     * @param  User  $user  Motorista autenticado.
+     * @param  UploadedFile  $file  Imagem ou PDF da CNH.
+     * @return DriverProfile Perfil com `cnh_file_path` e `cnh_uploaded_at` atualizados.
+     *
+     * @throws ValidationException Se o usuário não for motorista.
      */
     public function uploadCnh(User $user, UploadedFile $file): DriverProfile
     {

@@ -7,10 +7,17 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * Provisionamento e manutenção de tenants (empresas) no modelo multi-tenant.
+ */
 class TenantService
 {
     /**
-     * Cria uma nova empresa (tenant) e vincula o usuário como admin.
+     * Cria uma empresa e vincula o usuário como administrador.
+     *
+     * @param  array{name: string, slug?: string, settings?: array<string, mixed>}  $data  Dados da empresa.
+     * @param  User  $owner  Usuário que se tornará admin do tenant.
+     * @return Tenant Empresa criada.
      */
     public function create(array $data, User $owner): Tenant
     {
@@ -31,7 +38,11 @@ class TenantService
     }
 
     /**
-     * Atualiza os dados da empresa.
+     * Atualiza nome, slug ou configurações da empresa.
+     *
+     * @param  Tenant  $tenant  Empresa a editar.
+     * @param  array<string, mixed>  $data  Campos validados.
+     * @return Tenant Empresa atualizada.
      */
     public function update(Tenant $tenant, array $data): Tenant
     {

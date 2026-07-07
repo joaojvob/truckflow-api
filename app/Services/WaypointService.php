@@ -7,10 +7,17 @@ use App\Models\Waypoint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * Gerencia paradas intermediárias (waypoints) ao longo da rota de um frete.
+ */
 class WaypointService
 {
     /**
-     * Cria um waypoint para um frete.
+     * Cria um waypoint georreferenciado vinculado ao frete.
+     *
+     * @param  Freight  $freight  Frete dono do waypoint.
+     * @param  array<string, mixed>  $data  Nome, tipo, lat/lng, ordem e flags opcionais.
+     * @return Waypoint Registro criado.
      */
     public function create(Freight $freight, array $data): Waypoint
     {
@@ -47,7 +54,10 @@ class WaypointService
     }
 
     /**
-     * Cria múltiplos waypoints de uma vez (batch na criação do frete).
+     * Cria múltiplos waypoints em sequência (usado na criação do frete).
+     *
+     * @param  Freight  $freight  Frete recém-criado.
+     * @param  array<int, array<string, mixed>>  $waypointsData  Lista de waypoints validados.
      */
     public function createBatch(Freight $freight, array $waypointsData): void
     {
@@ -58,7 +68,11 @@ class WaypointService
     }
 
     /**
-     * Atualiza um waypoint existente.
+     * Atualiza dados e/ou coordenadas de um waypoint existente.
+     *
+     * @param  Waypoint  $waypoint  Waypoint a editar.
+     * @param  array<string, mixed>  $data  Campos a atualizar.
+     * @return Waypoint Registro atualizado.
      */
     public function update(Waypoint $waypoint, array $data): Waypoint
     {
@@ -82,7 +96,9 @@ class WaypointService
     }
 
     /**
-     * Remove um waypoint.
+     * Remove um waypoint e reordena os restantes.
+     *
+     * @param  Waypoint  $waypoint  Waypoint a excluir.
      */
     public function delete(Waypoint $waypoint): void
     {
@@ -91,7 +107,6 @@ class WaypointService
 
         $waypoint->delete();
 
-        // Reordenar os waypoints restantes
         $freight->waypoints()->orderBy('order')->get()->each(function ($wp, $index) {
             $wp->update(['order' => $index]);
         });
@@ -103,7 +118,12 @@ class WaypointService
     }
 
     /**
-     * Motorista faz check-in (chegou no waypoint).
+     * Motorista registra chegada ao waypoint.
+     *
+     * @param  Waypoint  $waypoint  Parada a visitar.
+     * @return Waypoint Waypoint com `arrived_at` preenchido.
+     *
+     * @throws ValidationException Se o check-in já foi realizado.
      */
     public function checkin(Waypoint $waypoint): Waypoint
     {
@@ -125,7 +145,12 @@ class WaypointService
     }
 
     /**
-     * Motorista faz check-out (saiu do waypoint).
+     * Motorista registra saída do waypoint após o check-in.
+     *
+     * @param  Waypoint  $waypoint  Parada visitada.
+     * @return Waypoint Waypoint com `departed_at` preenchido.
+     *
+     * @throws ValidationException Se check-in não foi feito ou check-out já realizado.
      */
     public function checkout(Waypoint $waypoint): Waypoint
     {
@@ -153,7 +178,10 @@ class WaypointService
     }
 
     /**
-     * Reordena os waypoints de um frete.
+     * Reordena waypoints conforme a sequência de IDs informada.
+     *
+     * @param  Freight  $freight  Frete dono dos waypoints.
+     * @param  array<int, int>  $orderedIds  IDs na ordem desejada de parada.
      */
     public function reorder(Freight $freight, array $orderedIds): void
     {

@@ -3,20 +3,31 @@
 namespace App\Services;
 
 use App\Enums\IncidentType;
+use App\Events\SosTriggered;
 use App\Models\Freight;
 use App\Models\Incident;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Registra incidentes e alertas SOS durante fretes em andamento.
+ */
 class IncidentService
 {
     /**
-     * Registra um incidente vinculado a um frete.
+     * Cria um incidente georreferenciado e dispara broadcast se for crítico (SOS).
+     *
+     * @param  Freight  $freight  Frete em andamento.
+     * @param  IncidentType  $type  Tipo do incidente (SOS, avaria, acidente, etc.).
+     * @param  float  $lat  Latitude WGS84.
+     * @param  float  $lng  Longitude WGS84.
+     * @param  string|null  $description  Texto livre; usa descrição padrão se omitido.
+     * @return Incident Registro criado.
      */
     public function create(Freight $freight, IncidentType $type, float $lat, float $lng, ?string $description = null): Incident
     {
         return DB::transaction(function () use ($freight, $type, $lat, $lng, $description) {
             $incident = $freight->incidents()->create([
-                'tenant_id'   => auth()->user()->tenant_id,
+                'tenant_id'   => $freight->tenant_id,
                 'user_id'     => auth()->id(),
                 'type'        => $type,
                 'description' => $description ?? $this->defaultDescription($type),
@@ -35,13 +46,18 @@ class IncidentService
             );
 
             if ($type->isCritical()) {
-                event(new \App\Events\SosTriggered($incident));
+                event(new SosTriggered($incident));
             }
 
             return $incident;
         });
     }
 
+    /**
+     * Retorna descrição padrão em português para cada tipo de incidente.
+     *
+     * @param  IncidentType  $type  Tipo do incidente.
+     */
     private function defaultDescription(IncidentType $type): string
     {
         return match ($type) {
