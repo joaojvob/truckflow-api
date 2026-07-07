@@ -3,11 +3,15 @@
 namespace App\Services;
 
 use App\Models\Trailer;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class TrailerService
 {
+    public function __construct(
+        protected DocumentStorageService $documentStorage,
+    ) {}
     /**
      * Registra um novo reboque/engate.
      */
@@ -96,5 +100,32 @@ class TrailerService
         $trailer->update(['is_loaded' => $isLoaded]);
 
         return $trailer->fresh();
+    }
+
+    /**
+     * Anexa ou substitui o CRLV do reboque.
+     */
+    public function uploadCrlv(Trailer $trailer, UploadedFile $file, ?string $crlvExpiry = null): Trailer
+    {
+        return DB::transaction(function () use ($trailer, $file, $crlvExpiry) {
+            $path = $this->documentStorage->replace(
+                $file,
+                "vehicle-documents/{$trailer->tenant_id}/trailers/{$trailer->id}/crlv",
+                $trailer->crlv_file_path,
+            );
+
+            $trailer->update([
+                'crlv_file_path'   => $path,
+                'crlv_expiry'      => $crlvExpiry,
+                'crlv_uploaded_at' => now(),
+            ]);
+
+            $trailer->recordActivity(
+                action: 'trailer_crlv_uploaded',
+                description: "CRLV do reboque {$trailer->plate} atualizado.",
+            );
+
+            return $trailer->fresh('driver');
+        });
     }
 }

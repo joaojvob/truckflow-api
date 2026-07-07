@@ -3,12 +3,17 @@
 namespace App\Services;
 
 use App\Enums\TruckStatus;
+use App\Models\Trailer;
 use App\Models\Truck;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class TruckService
 {
+    public function __construct(
+        protected DocumentStorageService $documentStorage,
+    ) {}
     /**
      * Registra um novo caminhão.
      */
@@ -108,5 +113,32 @@ class TruckService
         );
 
         return $truck->fresh('driver');
+    }
+
+    /**
+     * Anexa ou substitui o CRLV do caminhão.
+     */
+    public function uploadCrlv(Truck $truck, UploadedFile $file, ?string $crlvExpiry = null): Truck
+    {
+        return DB::transaction(function () use ($truck, $file, $crlvExpiry) {
+            $path = $this->documentStorage->replace(
+                $file,
+                "vehicle-documents/{$truck->tenant_id}/trucks/{$truck->id}/crlv",
+                $truck->crlv_file_path,
+            );
+
+            $truck->update([
+                'crlv_file_path'   => $path,
+                'crlv_expiry'      => $crlvExpiry,
+                'crlv_uploaded_at' => now(),
+            ]);
+
+            $truck->recordActivity(
+                action: 'truck_crlv_uploaded',
+                description: "CRLV do caminhão {$truck->plate} atualizado.",
+            );
+
+            return $truck->fresh('driver');
+        });
     }
 }

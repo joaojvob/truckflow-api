@@ -39,10 +39,13 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Perfil do Motorista
     Route::get('/driver-profile', [DriverProfileController::class, 'show']);
     Route::put('/driver-profile', [DriverProfileController::class, 'update']);
+    Route::post('/driver-profile/cnh', [DriverProfileController::class, 'uploadCnh']);
+    Route::get('/driver-profile/cnh', [DriverProfileController::class, 'downloadCnh']);
 
     // Usuários (gestão pelo admin/manager)
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::get('/users/{user}/cnh', [DriverProfileController::class, 'downloadCnhForUser']);
     Route::patch('/users/{user}/role', [UserController::class, 'updateRole']);
 
     // Fretes — CRUD
@@ -64,6 +67,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Relatórios
     Route::get('/reports/dashboard', [ReportController::class, 'dashboard']);
     Route::get('/reports/financial', [ReportController::class, 'financial']);
+    Route::get('/reports/financial/export', [ReportController::class, 'exportFinancial']);
 
     // Fretes — Workflow (gestor↔motorista)
     Route::prefix('freights/{freight}')->group(function () {
@@ -106,8 +110,12 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
 
     // Caminhões — CRUD
+    Route::post('/trucks/{truck}/crlv', [TruckController::class, 'uploadCrlv']);
+    Route::get('/trucks/{truck}/crlv', [TruckController::class, 'downloadCrlv']);
     Route::apiResource('trucks', TruckController::class);
 
     // Reboques — CRUD
+    Route::post('/trailers/{trailer}/crlv', [TrailerController::class, 'uploadCrlv']);
+    Route::get('/trailers/{trailer}/crlv', [TrailerController::class, 'downloadCrlv']);
     Route::apiResource('trailers', TrailerController::class);
 });

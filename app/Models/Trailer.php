@@ -20,6 +20,9 @@ class Trailer extends Model
         'driver_id',
         'plate',
         'renavam',
+        'crlv_file_path',
+        'crlv_expiry',
+        'crlv_uploaded_at',
         'type',
         'brand',
         'model',
@@ -41,7 +44,9 @@ class Trailer extends Model
             'max_weight' => 'decimal:2',
             'length'     => 'decimal:2',
             'year'       => 'integer',
-            'axle_count' => 'integer',
+            'axle_count'        => 'integer',
+            'crlv_expiry'       => 'date',
+            'crlv_uploaded_at'  => 'datetime',
         ];
     }
 
@@ -53,6 +58,16 @@ class Trailer extends Model
     public function freights(): HasMany
     {
         return $this->hasMany(Freight::class);
+    }
+
+    public function hasCrlvDocument(): bool
+    {
+        return filled($this->crlv_file_path);
+    }
+
+    public function isCrlvExpired(): bool
+    {
+        return $this->crlv_expiry && $this->crlv_expiry->isPast();
     }
 
     public function isAvailable(): bool

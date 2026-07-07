@@ -19,6 +19,9 @@ class Truck extends Model
         'driver_id',
         'plate',
         'renavam',
+        'crlv_file_path',
+        'crlv_expiry',
+        'crlv_uploaded_at',
         'brand',
         'model',
         'year',
@@ -38,6 +41,8 @@ class Truck extends Model
             'has_trailer_hitch' => 'boolean',
             'max_weight'        => 'decimal:2',
             'odometer'          => 'integer',
+            'crlv_expiry'       => 'date',
+            'crlv_uploaded_at'  => 'datetime',
             'year'              => 'integer',
             'axle_count'        => 'integer',
         ];
@@ -51,6 +56,16 @@ class Truck extends Model
     public function freights(): HasMany
     {
         return $this->hasMany(Freight::class);
+    }
+
+    public function hasCrlvDocument(): bool
+    {
+        return filled($this->crlv_file_path);
+    }
+
+    public function isCrlvExpired(): bool
+    {
+        return $this->crlv_expiry && $this->crlv_expiry->isPast();
     }
 
     public function isAvailable(): bool

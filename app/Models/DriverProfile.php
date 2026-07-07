@@ -20,6 +20,8 @@ class DriverProfile extends Model
         'cnh_number',
         'cnh_category',
         'cnh_expiry',
+        'cnh_file_path',
+        'cnh_uploaded_at',
         'address',
         'city',
         'state',
@@ -33,7 +35,8 @@ class DriverProfile extends Model
     {
         return [
             'birth_date'   => 'date',
-            'cnh_expiry'   => 'date',
+            'cnh_expiry'      => 'date',
+            'cnh_uploaded_at' => 'datetime',
             'is_available' => 'boolean',
         ];
     }
@@ -41,6 +44,11 @@ class DriverProfile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function hasCnhDocument(): bool
+    {
+        return filled($this->cnh_file_path);
     }
 
     public function isCnhExpired(): bool

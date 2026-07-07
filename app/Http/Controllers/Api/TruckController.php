@@ -5,16 +5,20 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTruckRequest;
 use App\Http\Requests\UpdateTruckRequest;
+use App\Http\Requests\UploadDocumentRequest;
 use App\Http\Resources\TruckResource;
 use App\Models\Truck;
+use App\Services\DocumentStorageService;
 use App\Services\TruckService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TruckController extends Controller
 {
     public function __construct(
         protected TruckService $truckService,
+        protected DocumentStorageService $documentStorage,
     ) {}
 
     public function index(): AnonymousResourceCollection
@@ -72,5 +76,31 @@ class TruckController extends Controller
         return response()->json([
             'message' => 'Caminhão excluído com sucesso!',
         ]);
+    }
+
+    public function uploadCrlv(UploadDocumentRequest $request, Truck $truck): JsonResponse
+    {
+        $this->authorize('update', $truck);
+
+        $truck = $this->truckService->uploadCrlv(
+            $truck,
+            $request->file('file'),
+            $request->validated('crlv_expiry'),
+        );
+
+        return response()->json([
+            'data'    => TruckResource::make($truck),
+            'message' => 'CRLV do caminhão enviado com sucesso!',
+        ], 201);
+    }
+
+    public function downloadCrlv(Truck $truck): StreamedResponse
+    {
+        $this->authorize('view', $truck);
+
+        return $this->documentStorage->download(
+            $truck->crlv_file_path,
+            "crlv-caminhao-{$truck->plate}.".pathinfo($truck->crlv_file_path ?? '', PATHINFO_EXTENSION),
+        );
     }
 }

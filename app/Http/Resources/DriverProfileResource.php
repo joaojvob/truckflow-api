@@ -19,6 +19,8 @@ class DriverProfileResource extends JsonResource
             'cnh_expiry'              => $this->cnh_expiry?->format('Y-m-d'),
             'cnh_expired'             => $this->isCnhExpired(),
             'cnh_expiring_soon'       => $this->isCnhExpiringSoon(),
+            'cnh_has_document'        => $this->hasCnhDocument(),
+            'cnh_uploaded_at'         => $this->cnh_uploaded_at,
             'address'                 => $this->address,
             'city'                    => $this->city,
             'state'                   => $this->state,
