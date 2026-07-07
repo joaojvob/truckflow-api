@@ -134,6 +134,11 @@ class Freight extends Model
         return $this->hasMany(Waypoint::class)->orderBy('order');
     }
 
+    public function driverLocations(): HasMany
+    {
+        return $this->hasMany(DriverLocation::class)->orderByDesc('recorded_at');
+    }
+
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');

@@ -98,4 +98,20 @@ class FreightPolicy
     {
         return $this->update($user, $freight);
     }
+
+    /**
+     * Enviar posição GPS — motorista do frete em trânsito.
+     */
+    public function track(User $user, Freight $freight): bool
+    {
+        return $user->isDriver() && $freight->driver_id === $user->id;
+    }
+
+    /**
+     * Visualizar relatórios — admin e gestor.
+     */
+    public function viewReports(User $user): bool
+    {
+        return $user->isAdmin() || $user->isManager();
+    }
 }

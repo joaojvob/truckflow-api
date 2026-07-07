@@ -2,19 +2,22 @@
 
 **API REST para gestão de frotas e logística de transporte rodoviário.**
 
-Backend SaaS multi-tenant construído com Laravel 12, PostgreSQL + PostGIS, projetado para ser consumido por uma aplicação **React (web)** e **Flutter (app mobile)**.
+Backend SaaS multi-tenant construído com Laravel 12 e PostgreSQL + PostGIS. **API REST pura** — clientes web e mobile são repositórios separados.
 
 ![PHP](https://img.shields.io/badge/PHP-8.4+-777BB4?logo=php&logoColor=white)
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql&logoColor=white)
 ![PostGIS](https://img.shields.io/badge/PostGIS-3.5-4E9A06)
-![Tests](https://img.shields.io/badge/Tests-81%20passed-brightgreen)
-![Assertions](https://img.shields.io/badge/Assertions-243-blue)
+![Tests](https://img.shields.io/badge/Tests-90%20passed-brightgreen)
+![Assertions](https://img.shields.io/badge/Assertions-271-blue)
+![MVP](https://img.shields.io/badge/MVP%20Backend-Concluído-success)
+![API v2](https://img.shields.io/badge/API%20v2-Concluído-success)
 
 ---
 
 ## 📑 Índice
 
+- [Status do Projeto](#-status-do-projeto)
 - [Visão Geral](#-visão-geral)
 - [Arquitetura](#-arquitetura)
 - [Regras de Negócio](#-regras-de-negócio)
@@ -22,12 +25,26 @@ Backend SaaS multi-tenant construído com Laravel 12, PostgreSQL + PostGIS, proj
 - [Roles e Permissões](#-roles-e-permissões)
 - [Endpoints da API](#-endpoints-da-api)
 - [Geolocalização e Rotas](#-geolocalização-e-rotas)
-- [Notificações](#-notificações)
+- [Documentação OpenAPI](#-documentação-openapi)
+- [WebSocket (Reverb)](#-websocket-reverb)
 - [Enums](#-enums)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Setup Local](#-setup-local)
 - [Testes](#-testes)
 - [Roadmap](#-roadmap)
+
+---
+
+## 📌 Status do Projeto
+
+| Fase | Status | Descrição |
+|------|--------|-----------|
+| **MVP Backend** | ✅ Concluído | API REST funcional, testada e containerizada |
+| **Frontend Web** | 🔜 Repositório separado | Painel do gestor/admin |
+| **App Mobile** | 🔜 Repositório separado | App do motorista |
+| **API v2** | ✅ Concluído | Places, GPS em tempo real, WebSocket (Reverb), relatórios |
+
+> Este repositório contém **somente o backend**. Não há Vite, npm, React nem Flutter aqui — apenas a API consumível via HTTP com token Sanctum.
 
 ---
 
@@ -39,15 +56,15 @@ O **TruckFlow** é uma plataforma SaaS para transportadoras gerenciarem:
 - **Motoristas** com perfil profissional, CNH e exame de doping
 - **Frota** (caminhões e reboques) com status e tipos detalhados
 - **Rotas geográficas** com coordenadas PostGIS e integração Google Maps
-- **Notificações em tempo real** entre gestor e motorista
+- **Notificações** entre gestor e motorista (database + fila Redis)
 - **Auditoria** com log de todas as ações
 
-### Conceito de Uso
+### Papéis de Usuário (consumidos por clientes externos)
 
-| Plataforma | Usuário | Função |
-|------------|---------|--------|
-| **Web (React)** | Administrador / Gestor | Cria empresa, cadastra motoristas, cria fretes, define rotas, acompanha viagens, aprova documentos |
-| **App (Flutter)** | Motorista | Completa o cadastro, aceita/recusa fretes, envia doping e checklist, navega pela rota, reporta incidentes |
+| Cliente | Usuário | Função na API |
+|---------|---------|---------------|
+| **Web** (repo separado) | Administrador / Gestor | Cria empresa, cadastra motoristas, fretes, rotas, aprova documentos |
+| **Mobile** (repo separado) | Motorista | Onboarding, aceita/recusa fretes, doping, checklist, check-in em waypoints, SOS |
 
 ---
 
@@ -117,7 +134,7 @@ GESTOR (Web)                           MOTORISTA (App)
 ```
 
 - O **gestor cria o usuário motorista pela web** com dados básicos (nome, email, senha, role `driver`)
-- O motorista recebe as credenciais e **faz login no app Flutter**
+- O motorista recebe as credenciais e **faz login no app mobile** (cliente externo)
 - No primeiro acesso, o motorista **completa o cadastro** via `PUT /driver-profile` (CNH, tipo de CNH, telefone, endereço)
 - O motorista também cadastra seu caminhão (`POST /trucks`) e reboque (`POST /trailers`)
 
@@ -276,19 +293,18 @@ origin      = ST_GeomFromText('POINT(-46.6333 -23.5505)', 4326)  -- São Paulo
 destination = ST_GeomFromText('POINT(-49.2733 -25.4284)', 4326)  -- Curitiba
 ```
 
-### Google Maps Platform — APIs Recomendadas
+### Google Maps Platform — Uso na API e nos Clientes
 
-Para integração com geolocalização no **app Flutter** e **web React**, recomendamos as seguintes APIs do Google (com free tier generoso):
+A **API** usa a [Directions API](https://developers.google.com/maps/documentation/directions) para calcular rotas e retorna `polyline` + coordenadas. Os **clientes** (web/mobile) usam essa polyline para desenhar o mapa com a SDK de sua escolha.
 
-| API | Uso | Free Tier |
-|-----|-----|-----------|
-| **[Directions API](https://developers.google.com/maps/documentation/directions)** | Traçar rota entre origem e destino com waypoints intermediários | US$ 200/mês de crédito (~40.000 requests) |
-| **[Maps JavaScript API](https://developers.google.com/maps/documentation/javascript)** | Exibir mapa interativo na web (React) com a rota desenhada | US$ 200/mês de crédito (~28.000 loads) |
-| **[Maps SDK for Flutter](https://pub.dev/packages/google_maps_flutter)** | Exibir mapa no app mobile com navegação | Incluso no crédito |
-| **[Geocoding API](https://developers.google.com/maps/documentation/geocoding)** | Converter endereço ↔ coordenadas | US$ 200/mês de crédito (~40.000 requests) |
-| **[Places API](https://developers.google.com/maps/documentation/places)** | Buscar postos de combustível, pontos de descanso, restaurantes | US$ 200/mês de crédito |
+| API Google | Quem usa | Finalidade |
+|------------|----------|------------|
+| **Directions API** | Backend (este repo) | Calcular rota com waypoints |
+| **Maps JavaScript / SDK mobile** | Cliente web/mobile | Exibir mapa e navegação |
+| **Places API** | Backend (este repo) | Buscar postos, restaurantes, descanso |
+| **Geocoding API** | Cliente ou backend | Converter endereço ↔ coordenadas |
 
-> 💡 **Dica:** O Google oferece **US$ 200/mês de crédito grátis** para todas as APIs do Maps Platform. Para a maioria das transportadoras de pequeno/médio porte, isso cobre 100% do uso mensal.
+> Crédito gratuito de **US$ 200/mês** no Google Maps Platform — suficiente para desenvolvimento e aprendizado.
 
 ### Rotas com Waypoints (Pontos de Parada)
 
@@ -337,20 +353,20 @@ O gestor pode definir **waypoints** (pontos de parada obrigatórios ou sugeridos
 | `waypoints[].mandatory` | `bool` | Se `true`, motorista é **obrigado** a passar neste ponto |
 | `enforce_route` | `bool` | Se `true`, motorista **deve seguir** a rota exata definida pelo gestor |
 
-**Comportamento no App (motorista):**
+**Comportamento nos clientes (referência para implementação futura):**
 
-| `enforce_route` | Comportamento |
-|-----------------|--------------|
-| `true` | App exibe a rota do gestor como **fixa**. Motorista não pode alterar. Navegação segue waypoints obrigatórios. |
-| `false` | Motorista pode **traçar rota alternativa** e adicionar seus próprios waypoints (postos preferidos, paradas de descanso, etc.). |
+| `enforce_route` | Comportamento esperado no app do motorista |
+|-----------------|--------------------------------------------|
+| `true` | Rota fixa do gestor; waypoints obrigatórios |
+| `false` | Motorista pode adicionar paradas próprias |
 
-**Comportamento na Web (gestor):**
+**Comportamento no painel web (referência):**
 
-- Vê o mapa em tempo real com a posição do motorista
-- Visualiza se o motorista seguiu a rota definida
-- Mapa mostra os waypoints com ícones diferenciados por tipo (🛢️ posto, 🛏️ descanso, 🔄 pedágio)
+- Visualizar posição do motorista em tempo real via WebSocket
+- Ver se a rota definida foi seguida
+- Waypoints com ícones por tipo (posto, descanso, pedágio)
 
-> ✅ **Status de implementação:** Waypoints, `enforce_route`, check-in/check-out, reorder e cálculo de rota via **Google Directions API** já estão implementados na API. A integração com **Google Places API** permanece planejada (veja [Roadmap](#-roadmap)).
+> ✅ **Status de implementação:** Waypoints, `enforce_route`, check-in/check-out, reorder, cálculo de rota via **Google Directions API**, busca de lugares via **Google Places API**, tracking GPS e broadcast WebSocket já estão implementados na API.
 
 ---
 
@@ -379,11 +395,56 @@ O sistema usa **Laravel Database Notifications** (tabela `notifications`) para c
 
 ---
 
+## 📖 Documentação OpenAPI
+
+A API usa **[dedoc/scramble](https://github.com/dedoc/scramble)** para gerar documentação OpenAPI automaticamente a partir dos controllers, form requests e resources.
+
+| Recurso | URL |
+|---------|-----|
+| UI interativa | `http://localhost/docs/api` |
+| JSON exportável | `http://localhost/docs/api.json` |
+
+Em ambiente `local`, a documentação fica acessível sem autenticação. Em produção, restrinja o acesso conforme necessário.
+
+---
+
+## 🔌 WebSocket (Reverb)
+
+Eventos em tempo real via **Laravel Reverb** (protocolo Pusher-compatible):
+
+| Evento | Canal | Quando |
+|--------|-------|--------|
+| `driver.location.updated` | `private-tenant.{tenantId}.freight.{freightId}` | Motorista envia posição GPS |
+| `freight.sos.triggered` | `private-tenant.{tenantId}.freight.{freightId}` | SOS ou incidente crítico |
+
+O serviço `reverb` roda no Sail na porta **8080**. Configure no `.env`:
+
+```env
+BROADCAST_CONNECTION=reverb
+REVERB_APP_ID=truckflow
+REVERB_APP_KEY=truckflow-key
+REVERB_APP_SECRET=truckflow-secret
+REVERB_HOST=localhost
+REVERB_PORT=8080
+REVERB_SCHEME=http
+```
+
+Clientes (web/mobile) autenticam no canal privado via endpoint `/broadcasting/auth` com token Sanctum.
+
+---
+
 ## 📡 Endpoints da API
 
 **Base URL:** `http://localhost/api/v1`  
 **Autenticação:** Bearer Token (Laravel Sanctum)  
-**Total de rotas:** 56
+**Total de rotas:** 63
+
+### Documentação interativa
+
+| Recurso | URL | Descrição |
+|---------|-----|-----------|
+| **OpenAPI UI** | `http://localhost/docs/api` | Documentação gerada automaticamente (Scramble) |
+| **OpenAPI JSON** | `http://localhost/docs/api.json` | Especificação exportável para clientes |
 
 ### Autenticação
 
@@ -436,6 +497,37 @@ O sistema usa **Laravel Database Notifications** (tabela `notifications`) para c
 | `POST` | `/freights/{freight}/route` | Calcular rota via Google Directions | Admin / Manager (dono) |
 
 > Requer `GOOGLE_MAPS_API_KEY` no `.env`. Use a [Google Maps Platform](https://developers.google.com/maps/documentation) — crédito gratuito de **US$ 200/mês** cobre bem o uso em desenvolvimento e aprendizado.
+
+### Fretes — Places (Google Places API)
+
+| Método | Rota | Descrição | Quem |
+|--------|------|-----------|------|
+| `POST` | `/freights/{freight}/places/search` | Buscar postos, restaurantes, etc. próximos | Dono / Atribuído |
+
+```jsonc
+// POST /api/v1/freights/{id}/places/search
+{
+  "lat": -23.55,
+  "lng": -46.63,
+  "type": "gas_station",   // gas_station | restaurant | rest_stop | lodging | car_repair
+  "radius_meters": 5000    // opcional, padrão 5000
+}
+```
+
+### Fretes — Tracking GPS
+
+| Método | Rota | Descrição | Quem |
+|--------|------|-----------|------|
+| `POST` | `/freights/{freight}/tracking` | Motorista envia posição GPS | Driver (em trânsito) |
+| `GET` | `/freights/{freight}/tracking` | Última posição registrada | Dono / Atribuído |
+| `GET` | `/freights/{freight}/tracking/history` | Histórico de posições | Dono / Atribuído |
+
+### Relatórios
+
+| Método | Rota | Descrição | Quem |
+|--------|------|-----------|------|
+| `GET` | `/reports/dashboard` | Métricas gerais (fretes, receita, km) | Admin / Manager |
+| `GET` | `/reports/financial` | Relatório financeiro por período | Admin / Manager |
 
 ### Fretes — Workflow
 
@@ -749,8 +841,20 @@ CACHE_STORE=redis
 SESSION_DRIVER=redis
 QUEUE_CONNECTION=redis
 
-# Google Maps Platform (Directions API)
+# Google Maps Platform (Directions + Places API)
 GOOGLE_MAPS_API_KEY=sua-chave-aqui
+
+# WebSocket (Laravel Reverb)
+BROADCAST_CONNECTION=reverb
+REVERB_APP_ID=truckflow
+REVERB_APP_KEY=truckflow-key
+REVERB_APP_SECRET=truckflow-secret
+REVERB_HOST=localhost
+REVERB_PORT=8080
+REVERB_SCHEME=http
+
+# Documentação OpenAPI
+API_VERSION=1.0.0
 
 # Rate limiting por tenant (requisições/minuto)
 API_RATE_LIMIT_PER_MINUTE=120
@@ -788,8 +892,8 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 ### Resultado Atual
 
 ```
-✓ 81 testes passando (243 assertions)
-✓ Duração: ~5s
+✓ 90 testes passando (271 assertions)
+✓ Duração: ~6s
 ```
 
 | Suite | Testes | Descrição |
@@ -798,8 +902,12 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 | `DriverProfileTest` | 4 | CRUD do perfil do motorista |
 | `FreightCrudTest` | 12 | CRUD de fretes + escopo por role |
 | `FreightRouteTest` | 8 | Cálculo de rota via Google Directions API |
+| `FreightPlaceTest` | 1 | Busca de lugares via Google Places API |
+| `FreightTrackingTest` | 3 | Tracking GPS em tempo real |
+| `ReportTest` | 3 | Dashboard e relatório financeiro |
 | `FreightWorkflowTest` | 17 | Workflow completo + teste E2E ponta-a-ponta |
 | `TenantTest` | 5 | CRUD da empresa |
+| `TenantRateLimitTest` | 2 | Rate limit por tenant |
 | `TrailerCrudTest` | 6 | CRUD de reboques |
 | `TruckCrudTest` | 7 | CRUD de caminhões |
 | `WaypointCrudTest` | 14 | CRUD de waypoints + enforce_route + check-in/out |
@@ -812,44 +920,46 @@ Após rodar `migrate:fresh --seed`, os seguintes usuários são criados:
 
 ## 🗺 Roadmap
 
-### ✅ Implementado
+### ✅ MVP Backend — Concluído
 
 - [x] Multi-tenancy com Global Scope isolando dados por empresa
 - [x] Autenticação via Laravel Sanctum (token bearer)
-- [x] Cadastro de motorista pelo gestor (web) + onboarding pelo app
+- [x] Cadastro de motorista pelo gestor + onboarding pelo app
 - [x] CRUD completo de fretes com cálculo automático de preço
 - [x] CRUD de caminhões e reboques (10 tipos brasileiros)
 - [x] Perfil do motorista (CNH, tipo, telefone, endereço)
 - [x] Workflow completo gestor ↔ motorista (8 estados com máquina de transição)
-- [x] Exame de doping (upload PDF/imagem + aprovação pelo gestor)
+- [x] Exame de doping (upload + aprovação pelo gestor)
 - [x] Checklist pré-viagem (envio + validação)
-- [x] Pré-requisitos obrigatórios para iniciar viagem (doping ✅ + checklist ✅ + aprovação ✅)
-- [x] Sistema de notificações database (7 tipos de notificação)
-- [x] Vínculo gestor ↔ motorista (tabela pivot `manager_driver`)
+- [x] Pré-requisitos obrigatórios para iniciar viagem
+- [x] Sistema de notificações database (7 tipos) + fila Redis
+- [x] Vínculo gestor ↔ motorista
 - [x] Políticas de autorização granular por role
-- [x] Audit trail completo (log de todas as ações)
+- [x] Audit trail completo
 - [x] Incidentes e SOS durante a viagem
-- [x] Coordenadas geográficas com PostGIS (origem/destino como POINT)
-- [x] Waypoints e rotas — CRUD, `enforce_route`, check-in/check-out e reorder
-- [x] Integração Google Directions API — Cálculo de rota com waypoints e polyline
-- [x] CI com GitHub Actions (testes com PostGIS)
-- [x] Stack Docker de produção (Nginx + PHP-FPM + PostGIS + Redis + Queue)
-- [x] Rate limiting por tenant na API
-- [x] 83 testes automatizados (251 assertions, incluindo E2E)
-- [x] Conventional Commits (52 commits)
-- [x] Documentação completa (README)
+- [x] Coordenadas geográficas com PostGIS
+- [x] Waypoints, `enforce_route`, check-in/check-out e reorder
+- [x] Google Directions API (polyline + distância)
+- [x] CI (GitHub Actions) + Docker produção + rate limiting por tenant
+- [x] 90 testes automatizados (271 assertions)
+- [x] Repositório API-only (sem assets de frontend)
+- [x] Google Places API (busca de postos, restaurantes, etc.)
+- [x] Tracking GPS em tempo real com broadcast WebSocket
+- [x] Laravel Reverb para eventos ao vivo
+- [x] Relatórios (dashboard + financeiro)
+- [x] Documentação OpenAPI com Scramble (`/docs/api`)
 
-### 🔜 Próximas Iterações
+### 🔜 Próximas Iterações (backend)
 
-- [ ] **Integração Google Places API** — Buscar postos de combustível, restaurantes, pontos de descanso
-- [ ] **Tracking GPS em tempo real** — Posição do motorista atualizada periodicamente
-- [ ] **WebSocket / Pusher** — Notificações push em tempo real (web + app)
 - [ ] **Upload de documentos** — CNH, CRLV, apólice de seguro
-- [ ] **Relatórios financeiros** — Faturamento por período, motorista, rota
-- [ ] **Dashboard com métricas** — Fretes ativos, receita, km rodados, tempo médio
 - [ ] **Exportar relatórios** — PDF e Excel
 - [ ] **Integração ANTT** — Consulta de habilitação e RNTRC
 - [ ] **API v2** — Versionamento e breaking changes
+
+### 🔜 Clientes (repositórios separados)
+
+- [ ] **Painel Web** — Gestão de frota, fretes e mapas
+- [ ] **App Mobile** — Motorista em campo (GPS, checklist, SOS)
 
 ---
 

@@ -3,11 +3,14 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DriverProfileController;
 use App\Http\Controllers\Api\FreightController;
+use App\Http\Controllers\Api\FreightPlaceController;
 use App\Http\Controllers\Api\FreightRouteController;
+use App\Http\Controllers\Api\FreightTrackingController;
 use App\Http\Controllers\Api\FreightWorkflowController;
 use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\ManagerDriverController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\TenantController;
 use App\Http\Controllers\Api\TrailerController;
 use App\Http\Controllers\Api\TruckController;
@@ -49,6 +52,18 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     // Fretes — Rota (Google Directions API)
     Route::get('/freights/{freight}/route', [FreightRouteController::class, 'show']);
     Route::post('/freights/{freight}/route', [FreightRouteController::class, 'calculate']);
+
+    // Fretes — Places (Google Places API)
+    Route::post('/freights/{freight}/places/search', [FreightPlaceController::class, 'search']);
+
+    // Fretes — Tracking GPS
+    Route::get('/freights/{freight}/tracking', [FreightTrackingController::class, 'show']);
+    Route::get('/freights/{freight}/tracking/history', [FreightTrackingController::class, 'history']);
+    Route::post('/freights/{freight}/tracking', [FreightTrackingController::class, 'store']);
+
+    // Relatórios
+    Route::get('/reports/dashboard', [ReportController::class, 'dashboard']);
+    Route::get('/reports/financial', [ReportController::class, 'financial']);
 
     // Fretes — Workflow (gestor↔motorista)
     Route::prefix('freights/{freight}')->group(function () {

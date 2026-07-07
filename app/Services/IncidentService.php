@@ -34,10 +34,9 @@ class IncidentService
                 ],
             );
 
-            // TODO: Disparar evento para WebSocket (Laravel Reverb)
-            // if ($type->isCritical()) {
-            //     event(new \App\Events\SosTriggered($incident));
-            // }
+            if ($type->isCritical()) {
+                event(new \App\Events\SosTriggered($incident));
+            }
 
             return $incident;
         });

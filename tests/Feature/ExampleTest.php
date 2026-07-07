@@ -14,6 +14,8 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertOk()
+            ->assertJsonPath('type', 'REST API')
+            ->assertJsonPath('version', 'v1');
     }
 }
