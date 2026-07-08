@@ -34,6 +34,15 @@ class ReportController extends Controller
         ]);
     }
 
+    public function analytics(FinancialReportRequest $request): JsonResponse
+    {
+        $this->authorize('viewReports', \App\Models\Freight::class);
+
+        return response()->json([
+            'data' => $this->reportService->analytics($request->validated()),
+        ]);
+    }
+
     public function exportFinancial(ExportFinancialReportRequest $request): Response|BinaryFileResponse
     {
         return $this->reportExportService->exportFinancial(

@@ -10,11 +10,21 @@ class Tenant extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'settings'];
+    protected $fillable = ['name', 'slug', 'logo_path', 'settings'];
 
     protected $casts = [
         'settings' => 'array',
     ];
+
+    /**
+     * URL pública da logo da empresa (ou null se não houver).
+     */
+    public function logoUrl(): ?string
+    {
+        return $this->logo_path
+            ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->logo_path)
+            : null;
+    }
 
     public function users(): HasMany
     {

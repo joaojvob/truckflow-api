@@ -13,6 +13,7 @@ class TenantResource extends JsonResource
             'id'       => $this->id,
             'name'     => $this->name,
             'slug'     => $this->slug,
+            'logo_url' => $this->logoUrl(),
             'settings' => $this->settings,
         ];
     }

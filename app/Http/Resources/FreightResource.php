@@ -14,6 +14,8 @@ class FreightResource extends JsonResource
 
             // Carga
             'cargo_name'             => $this->cargo_name,
+            'cargo_type'             => $this->cargo_type?->value,
+            'cargo_type_label'       => $this->cargo_type?->label(),
             'cargo_description'      => $this->cargo_description,
             'weight'                 => $this->weight,
             'is_hazardous'           => $this->is_hazardous,
@@ -42,6 +44,28 @@ class FreightResource extends JsonResource
             // Endereços
             'origin_address'      => $this->origin_address,
             'destination_address' => $this->destination_address,
+            'origin' => [
+                'cep'          => $this->origin_cep,
+                'street'       => $this->origin_street,
+                'number'       => $this->origin_number,
+                'complement'   => $this->origin_complement,
+                'neighborhood' => $this->origin_neighborhood,
+                'city'         => $this->origin_city,
+                'state'        => $this->origin_state,
+                'lat'          => $this->getOriginCoordinates()['lat'] ?? null,
+                'lng'          => $this->getOriginCoordinates()['lng'] ?? null,
+            ],
+            'destination' => [
+                'cep'          => $this->destination_cep,
+                'street'       => $this->destination_street,
+                'number'       => $this->destination_number,
+                'complement'   => $this->destination_complement,
+                'neighborhood' => $this->destination_neighborhood,
+                'city'         => $this->destination_city,
+                'state'        => $this->destination_state,
+                'lat'          => $this->getDestinationCoordinates()['lat'] ?? null,
+                'lng'          => $this->getDestinationCoordinates()['lng'] ?? null,
+            ],
             'enforce_route'       => $this->enforce_route,
 
             // Rota (Google Directions)

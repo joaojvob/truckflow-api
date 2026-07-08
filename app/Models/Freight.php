@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CargoType;
 use App\Enums\DriverResponse;
 use App\Enums\FreightStatus;
 use App\Enums\TrailerType;
@@ -23,6 +24,7 @@ class Freight extends Model
         'truck_id',
         'trailer_id',
         'cargo_name',
+        'cargo_type',
         'cargo_description',
         'weight',
         'is_hazardous',
@@ -32,7 +34,21 @@ class Freight extends Model
         'origin',
         'destination',
         'origin_address',
+        'origin_cep',
+        'origin_street',
+        'origin_number',
+        'origin_complement',
+        'origin_neighborhood',
+        'origin_city',
+        'origin_state',
         'destination_address',
+        'destination_cep',
+        'destination_street',
+        'destination_number',
+        'destination_complement',
+        'destination_neighborhood',
+        'destination_city',
+        'destination_state',
         'required_trailer_type',
         'required_hitch_type',
         'distance_km',
@@ -67,6 +83,7 @@ class Freight extends Model
     {
         return [
             'status'                 => FreightStatus::class,
+            'cargo_type'             => CargoType::class,
             'required_trailer_type'  => TrailerType::class,
             'checklist_completed'    => 'boolean',
             'is_hazardous'           => 'boolean',

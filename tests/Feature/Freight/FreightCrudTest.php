@@ -102,6 +102,7 @@ class FreightCrudTest extends TestCase
 
         $payload = [
             'driver_id'           => $this->driver->id,
+            'cargo_type'          => 'dry_bulk',
             'cargo_name'          => 'Soja em grãos',
             'weight'              => 25.5,
             'origin_lat'          => -23.5505,

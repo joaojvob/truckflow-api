@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\CargoType;
 use App\Enums\DriverResponse;
 use App\Enums\FreightStatus;
 use App\Enums\TrailerType;
@@ -42,6 +43,7 @@ class FreightFactory extends Factory
                 'Alimentos perecíveis', 'Madeira', 'Fertilizantes', 'Automóveis',
                 'Gado vivo', 'Produtos químicos', 'Carga geral', 'Grãos de milho',
             ]),
+            'cargo_type'             => fake()->randomElement(CargoType::cases()),
             'cargo_description'      => fake()->optional()->sentence(),
             'weight'                 => $weight,
             'is_hazardous'           => fake()->boolean(15),

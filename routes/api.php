@@ -12,7 +12,11 @@ use App\Http\Controllers\Api\FreightWorkflowController;
 use App\Http\Controllers\Api\IncidentController;
 use App\Http\Controllers\Api\ManagerDriverController;
 use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\GeoController;
+use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\SuperAdminTenantController;
+use App\Http\Controllers\Api\SupportTicketController;
 use App\Http\Controllers\Api\TenantController;
 use App\Http\Controllers\Api\TrailerController;
 use App\Http\Controllers\Api\TruckController;
@@ -27,7 +31,7 @@ Route::prefix('v1')->group(function () {
 });
 
 // ─── Rotas Protegidas (Sanctum) ──────────────────────────────
-Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
+Route::prefix('v1')->middleware(['auth:sanctum', 'tenant.context'])->group(function () {
 
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -38,12 +42,14 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::get('/tenant', [TenantController::class, 'show']);
     Route::put('/tenant', [TenantController::class, 'update']);
     Route::put('/tenant/fiscal', [TenantController::class, 'updateFiscal']);
+    Route::post('/tenant/logo', [MediaController::class, 'uploadTenantLogo']);
 
     // Perfil do Motorista
     Route::get('/driver-profile', [DriverProfileController::class, 'show']);
     Route::put('/driver-profile', [DriverProfileController::class, 'update']);
     Route::post('/driver-profile/cnh', [DriverProfileController::class, 'uploadCnh']);
     Route::get('/driver-profile/cnh', [DriverProfileController::class, 'downloadCnh']);
+    Route::post('/driver-profile/photo', [MediaController::class, 'uploadDriverPhoto']);
 
     // Usuários (gestão pelo admin/manager)
     Route::get('/users', [UserController::class, 'index']);
@@ -69,6 +75,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // Relatórios
     Route::get('/reports/dashboard', [ReportController::class, 'dashboard']);
+    Route::get('/reports/analytics', [ReportController::class, 'analytics']);
     Route::get('/reports/financial', [ReportController::class, 'financial']);
     Route::get('/reports/financial/export', [ReportController::class, 'exportFinancial']);
 
@@ -111,6 +118,7 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
 
     // Gestão Gestor ↔ Motorista
     Route::get('/manager/drivers', [ManagerDriverController::class, 'index']);
+    Route::post('/manager/drivers/register', [ManagerDriverController::class, 'register']);
     Route::post('/manager/drivers', [ManagerDriverController::class, 'store']);
     Route::delete('/manager/drivers/{driver}', [ManagerDriverController::class, 'destroy']);
 
@@ -129,6 +137,24 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/trailers/{trailer}/crlv', [TrailerController::class, 'uploadCrlv']);
     Route::get('/trailers/{trailer}/crlv', [TrailerController::class, 'downloadCrlv']);
     Route::apiResource('trailers', TrailerController::class);
+
+    // Visão global (cross-tenant) — somente super admin
+    Route::prefix('admin')->middleware('super_admin')->group(function () {
+        Route::get('/tenants', [SuperAdminTenantController::class, 'index']);
+        Route::get('/tenants/{tenant}', [SuperAdminTenantController::class, 'show']);
+    });
+
+    // Geocodificação, cálculo de rota/frete e catálogos
+    Route::get('/geo/cep/{cep}', [GeoController::class, 'cep']);
+    Route::post('/geo/calculate', [GeoController::class, 'calculate']);
+    Route::get('/geo/cargo-types', [GeoController::class, 'cargoTypes']);
+
+    // Suporte (tickets)
+    Route::get('/support/tickets', [SupportTicketController::class, 'index']);
+    Route::post('/support/tickets', [SupportTicketController::class, 'store']);
+    Route::get('/support/tickets/{ticket}', [SupportTicketController::class, 'show']);
+    Route::post('/support/tickets/{ticket}/reply', [SupportTicketController::class, 'reply']);
+    Route::post('/support/tickets/{ticket}/close', [SupportTicketController::class, 'close']);
 
     // Painel administrativo (telemetria, logs, auditoria)
     Route::prefix('admin')->middleware('admin')->group(function () {

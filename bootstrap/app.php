@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Http\Middleware\EnsureUserIsSuperAdmin;
 use App\Http\Middleware\LogApiRequest;
+use App\Http\Middleware\ResolveTenantContext;
 use App\Services\SystemLogger;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -22,7 +24,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
         $middleware->alias([
-            'admin' => EnsureUserIsAdmin::class,
+            'admin'          => EnsureUserIsAdmin::class,
+            'super_admin'    => EnsureUserIsSuperAdmin::class,
+            'tenant.context' => ResolveTenantContext::class,
         ]);
         $middleware->api(prepend: [
             'throttle:api-tenant',

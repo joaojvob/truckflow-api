@@ -317,6 +317,7 @@ class WaypointCrudTest extends TestCase
 
         $payload = [
             'driver_id'           => $this->driver->id,
+            'cargo_type'          => 'dry_bulk',
             'cargo_name'          => 'Soja com rota',
             'weight'              => 25.5,
             'origin_lat'          => -23.5505,

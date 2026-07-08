@@ -28,6 +28,7 @@ class DriverProfileResource extends JsonResource
             'emergency_contact_name'  => $this->emergency_contact_name,
             'emergency_contact_phone' => $this->emergency_contact_phone,
             'is_available'            => $this->is_available,
+            'photo_url'               => $this->photoUrl(),
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Models\ActivityLog;
 use App\Models\RequestLog;
 use App\Models\SystemLog;
 use App\Models\User;
+use App\Support\TenantContext;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -31,7 +32,7 @@ class AdminTelemetryService
     public function summary(array $filters = []): array
     {
         [$from, $to] = $this->resolvePeriod($filters);
-        $tenantId = auth()->user()->tenant_id;
+        $tenantId = $this->tenantId();
 
         $requestQuery = RequestLog::query()
             ->where('tenant_id', $tenantId)
@@ -112,7 +113,7 @@ class AdminTelemetryService
     {
         [$from, $to] = $this->resolvePeriod($filters);
 
-        $tenantId = auth()->user()->tenant_id;
+        $tenantId = $this->tenantId();
 
         return SystemLog::query()
             ->where('tenant_id', $tenantId)
@@ -138,7 +139,7 @@ class AdminTelemetryService
     public function requestLogs(array $filters = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         [$from, $to] = $this->resolvePeriod($filters);
-        $tenantId = auth()->user()->tenant_id;
+        $tenantId = $this->tenantId();
 
         return RequestLog::query()
             ->where('tenant_id', $tenantId)
@@ -160,7 +161,7 @@ class AdminTelemetryService
     public function activityLogs(array $filters = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         [$from, $to] = $this->resolvePeriod($filters);
-        $tenantId = auth()->user()->tenant_id;
+        $tenantId = $this->tenantId();
 
         return ActivityLog::query()
             ->with(['user:id,name,email'])
@@ -183,6 +184,14 @@ class AdminTelemetryService
         $systemLog->update(['resolved_at' => now()]);
 
         return $systemLog->fresh('user');
+    }
+
+    /**
+     * Tenant efetivo (contexto do super admin ou tenant do próprio usuário).
+     */
+    private function tenantId(): ?int
+    {
+        return app(TenantContext::class)->effectiveId();
     }
 
     /**

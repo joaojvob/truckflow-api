@@ -8,6 +8,7 @@ use App\Http\Resources\RequestLogResource;
 use App\Http\Resources\SystemLogResource;
 use App\Models\SystemLog;
 use App\Services\AdminTelemetryService;
+use App\Support\TenantContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -16,6 +17,7 @@ class AdminPanelController extends Controller
 {
     public function __construct(
         protected AdminTelemetryService $telemetryService,
+        protected TenantContext $tenantContext,
     ) {}
 
     /**
@@ -45,7 +47,7 @@ class AdminPanelController extends Controller
      */
     public function showSystemLog(Request $request, SystemLog $systemLog): JsonResponse
     {
-        abort_unless($systemLog->tenant_id === auth()->user()->tenant_id, 404);
+        abort_unless($systemLog->tenant_id === $this->tenantContext->effectiveId(), 404);
 
         $systemLog->load('user:id,name,email');
 
@@ -59,7 +61,7 @@ class AdminPanelController extends Controller
      */
     public function resolveSystemLog(SystemLog $systemLog): JsonResponse
     {
-        abort_unless($systemLog->tenant_id === auth()->user()->tenant_id, 404);
+        abort_unless($systemLog->tenant_id === $this->tenantContext->effectiveId(), 404);
 
         $log = $this->telemetryService->resolveSystemLog($systemLog);
 

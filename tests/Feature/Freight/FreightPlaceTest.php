@@ -22,7 +22,10 @@ class FreightPlaceTest extends TestCase
     {
         parent::setUp();
 
-        config(['services.google_maps.api_key' => 'test-key']);
+        config([
+            'services.google_maps.api_key' => 'test-key',
+            'services.geo.driver'          => 'google_maps',
+        ]);
 
         $this->tenant = Tenant::factory()->create();
         $this->manager = User::factory()->manager()->create(['tenant_id' => $this->tenant->id]);

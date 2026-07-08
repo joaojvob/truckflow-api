@@ -20,6 +20,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // ── Super Admin (global, sem tenant) ─────────────────────
+        User::factory()->create([
+            'name'      => 'Super Admin',
+            'email'     => 'super@truckflow.com',
+            'role'      => \App\Enums\UserRole::SuperAdmin,
+            'tenant_id' => null,
+        ]);
+
         // ── Tenant: Transportadora Alpha ─────────────────────────
         $tenantAlpha = Tenant::create([
             'name'     => 'Transportadora Alpha',

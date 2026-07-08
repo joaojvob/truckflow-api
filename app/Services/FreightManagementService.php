@@ -33,11 +33,11 @@ class FreightManagementService
             $destLng = $data['destination_lng'];
 
             $freight = Freight::create([
-                'tenant_id'              => auth()->user()->tenant_id,
                 'driver_id'              => $data['driver_id'],
                 'truck_id'               => $data['truck_id'] ?? null,
                 'trailer_id'             => $data['trailer_id'] ?? null,
-                'cargo_name'             => $data['cargo_name'],
+                'cargo_name'             => $data['cargo_name'] ?? null,
+                'cargo_type'             => $data['cargo_type'] ?? null,
                 'cargo_description'      => $data['cargo_description'] ?? null,
                 'weight'                 => $data['weight'],
                 'is_hazardous'           => $data['is_hazardous'] ?? false,
@@ -46,8 +46,22 @@ class FreightManagementService
                 'status'                 => FreightStatus::Pending,
                 'origin'                 => DB::raw("ST_GeomFromText('POINT($originLng $originLat)', 4326)"),
                 'destination'            => DB::raw("ST_GeomFromText('POINT($destLng $destLat)', 4326)"),
-                'origin_address'         => $data['origin_address'],
-                'destination_address'    => $data['destination_address'],
+                'origin_address'         => $data['origin_address'] ?? $this->composeAddress($data, 'origin'),
+                'destination_address'    => $data['destination_address'] ?? $this->composeAddress($data, 'destination'),
+                'origin_cep'             => $data['origin_cep'] ?? null,
+                'origin_street'          => $data['origin_street'] ?? null,
+                'origin_number'          => $data['origin_number'] ?? null,
+                'origin_complement'      => $data['origin_complement'] ?? null,
+                'origin_neighborhood'    => $data['origin_neighborhood'] ?? null,
+                'origin_city'            => $data['origin_city'] ?? null,
+                'origin_state'           => $data['origin_state'] ?? null,
+                'destination_cep'          => $data['destination_cep'] ?? null,
+                'destination_street'       => $data['destination_street'] ?? null,
+                'destination_number'       => $data['destination_number'] ?? null,
+                'destination_complement'   => $data['destination_complement'] ?? null,
+                'destination_neighborhood' => $data['destination_neighborhood'] ?? null,
+                'destination_city'         => $data['destination_city'] ?? null,
+                'destination_state'        => $data['destination_state'] ?? null,
                 'required_trailer_type'  => $data['required_trailer_type'] ?? null,
                 'required_hitch_type'    => $data['required_hitch_type'] ?? null,
                 'distance_km'            => $data['distance_km'] ?? null,
@@ -71,7 +85,7 @@ class FreightManagementService
 
             $freight->recordActivity(
                 action: 'freight_created',
-                description: "Frete criado: {$freight->cargo_name}",
+                description: 'Frete criado: '.$this->cargoLabel($freight),
                 payload: [
                     'weight'      => $freight->weight,
                     'total_price' => $freight->total_price,
@@ -125,12 +139,40 @@ class FreightManagementService
 
             $freight->recordActivity(
                 action: 'freight_updated',
-                description: "Frete atualizado: {$freight->cargo_name}",
+                description: 'Frete atualizado: '.$this->cargoLabel($freight),
                 payload: ['changes' => array_keys($data)],
             );
 
             return $freight->fresh(['driver', 'truck', 'trailer', 'creator']);
         });
+    }
+
+    /**
+     * Rótulo legível da carga (tipo ou nome).
+     */
+    private function cargoLabel(Freight $freight): string
+    {
+        return $freight->cargo_name
+            ?: ($freight->cargo_type?->label() ?? 'Sem descrição');
+    }
+
+    /**
+     * Monta um endereço legível a partir dos campos estruturados.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function composeAddress(array $data, string $prefix): ?string
+    {
+        $parts = array_filter([
+            $data["{$prefix}_street"] ?? null,
+            $data["{$prefix}_number"] ?? null,
+            $data["{$prefix}_neighborhood"] ?? null,
+            $data["{$prefix}_city"] ?? null,
+            $data["{$prefix}_state"] ?? null,
+            $data["{$prefix}_cep"] ?? null,
+        ]);
+
+        return $parts ? implode(', ', $parts) : null;
     }
 
     /**
@@ -153,7 +195,7 @@ class FreightManagementService
 
         $freight->recordActivity(
             action: 'freight_cancelled',
-            description: "Frete cancelado: {$freight->cargo_name}",
+            description: 'Frete cancelado: '.$this->cargoLabel($freight),
         );
 
         return $freight->fresh();

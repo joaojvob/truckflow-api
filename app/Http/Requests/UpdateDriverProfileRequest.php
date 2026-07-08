@@ -28,6 +28,7 @@ class UpdateDriverProfileRequest extends FormRequest
             'zip_code'                => ['nullable', 'string', 'max:10'],
             'emergency_contact_name'  => ['nullable', 'string', 'max:255'],
             'emergency_contact_phone' => ['nullable', 'string', 'max:20'],
+            'is_available'            => ['sometimes', 'boolean'],
         ];
     }
 }

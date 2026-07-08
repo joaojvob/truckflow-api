@@ -71,9 +71,9 @@ class TenantController extends Controller
             ], 404);
         }
 
-        if ($user->role->value !== 'admin') {
+        if (! in_array($user->role->value, ['admin', 'manager'], true)) {
             return response()->json([
-                'message' => 'Somente administradores podem atualizar a empresa.',
+                'message' => 'Você não tem permissão para atualizar a empresa.',
             ], 403);
         }
 
@@ -100,9 +100,9 @@ class TenantController extends Controller
             ], 404);
         }
 
-        if ($user->role->value !== 'admin') {
+        if (! in_array($user->role->value, ['admin', 'manager'], true)) {
             return response()->json([
-                'message' => 'Somente administradores podem configurar dados fiscais.',
+                'message' => 'Você não tem permissão para configurar dados fiscais.',
             ], 403);
         }
 

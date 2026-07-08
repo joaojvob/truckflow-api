@@ -49,8 +49,25 @@ return [
     |
     */
     'geo' => [
-        'driver'   => env('GEO_ROUTING_DRIVER', 'google_maps'),
+        // google_maps | java | haversine (fallback offline, sem API externa)
+        'driver'   => env('GEO_ROUTING_DRIVER', 'haversine'),
         'java_url' => env('GEO_JAVA_SERVICE_URL', 'http://truckflow-geo:8081'),
+        // Fator de sinuosidade aplicado à distância em linha reta (Haversine).
+        'road_factor'      => (float) env('GEO_ROAD_FACTOR', 1.3),
+        // Velocidade média (km/h) usada para estimar duração no modo Haversine.
+        'avg_speed_kmh'    => (float) env('GEO_AVG_SPEED_KMH', 65),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Geocodificação de CEP (endereço + coordenadas)
+    |--------------------------------------------------------------------------
+    |
+    | brasilapi — BrasilAPI/ViaCEP (padrão, gratuito)
+    |
+    */
+    'geocoding' => [
+        'driver' => env('GEOCODING_DRIVER', 'brasilapi'),
     ],
 
     /*

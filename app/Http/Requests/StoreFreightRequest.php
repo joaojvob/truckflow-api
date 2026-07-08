@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\CargoType;
 use App\Enums\TrailerType;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
@@ -21,7 +22,8 @@ class StoreFreightRequest extends FormRequest
             'trailer_id' => ['nullable', 'exists:trailers,id'],
 
             // Carga
-            'cargo_name'             => ['required', 'string', 'max:255'],
+            'cargo_type'             => ['required', new Enum(CargoType::class)],
+            'cargo_name'             => ['nullable', 'string', 'max:255'],
             'cargo_description'      => ['nullable', 'string', 'max:2000'],
             'weight'                 => ['required', 'numeric', 'min:0.01', 'max:99999'],
             'is_hazardous'           => ['sometimes', 'boolean'],
@@ -33,12 +35,30 @@ class StoreFreightRequest extends FormRequest
             'required_hitch_type'   => ['nullable', 'string', 'in:fifth_wheel,pintle,drawbar'],
 
             // Endereços e coordenadas
-            'origin_address'      => ['required', 'string', 'max:500'],
-            'destination_address' => ['required', 'string', 'max:500'],
+            'origin_address'      => ['nullable', 'string', 'max:500'],
+            'destination_address' => ['nullable', 'string', 'max:500'],
             'origin_lat'          => ['required', 'numeric', 'between:-90,90'],
             'origin_lng'          => ['required', 'numeric', 'between:-180,180'],
             'destination_lat'     => ['required', 'numeric', 'between:-90,90'],
             'destination_lng'     => ['required', 'numeric', 'between:-180,180'],
+
+            // Endereço estruturado — origem
+            'origin_cep'          => ['nullable', 'string', 'max:9'],
+            'origin_street'       => ['nullable', 'string', 'max:255'],
+            'origin_number'       => ['nullable', 'string', 'max:30'],
+            'origin_complement'   => ['nullable', 'string', 'max:255'],
+            'origin_neighborhood' => ['nullable', 'string', 'max:255'],
+            'origin_city'         => ['nullable', 'string', 'max:255'],
+            'origin_state'        => ['nullable', 'string', 'size:2'],
+
+            // Endereço estruturado — destino
+            'destination_cep'          => ['nullable', 'string', 'max:9'],
+            'destination_street'       => ['nullable', 'string', 'max:255'],
+            'destination_number'       => ['nullable', 'string', 'max:30'],
+            'destination_complement'   => ['nullable', 'string', 'max:255'],
+            'destination_neighborhood' => ['nullable', 'string', 'max:255'],
+            'destination_city'         => ['nullable', 'string', 'max:255'],
+            'destination_state'        => ['nullable', 'string', 'size:2'],
 
             // Distância e tempo
             'distance_km'     => ['nullable', 'numeric', 'min:0'],

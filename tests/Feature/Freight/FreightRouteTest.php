@@ -27,7 +27,10 @@ class FreightRouteTest extends TestCase
     {
         parent::setUp();
 
-        config(['services.google_maps.api_key' => 'test-google-maps-key']);
+        config([
+            'services.google_maps.api_key' => 'test-google-maps-key',
+            'services.geo.driver'          => 'google_maps',
+        ]);
 
         $this->tenant = Tenant::factory()->create();
         $this->admin = User::factory()->admin()->create(['tenant_id' => $this->tenant->id]);

@@ -29,6 +29,7 @@ class DriverProfile extends Model
         'emergency_contact_name',
         'emergency_contact_phone',
         'is_available',
+        'photo_path',
     ];
 
     protected function casts(): array
@@ -49,6 +50,16 @@ class DriverProfile extends Model
     public function hasCnhDocument(): bool
     {
         return filled($this->cnh_file_path);
+    }
+
+    /**
+     * URL pública da foto de perfil (ou null se não houver).
+     */
+    public function photoUrl(): ?string
+    {
+        return $this->photo_path
+            ? \Illuminate\Support\Facades\Storage::disk('public')->url($this->photo_path)
+            : null;
     }
 
     public function isCnhExpired(): bool

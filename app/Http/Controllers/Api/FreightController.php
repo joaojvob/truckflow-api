@@ -33,7 +33,57 @@ class FreightController extends Controller
         }
         // Admin vê tudo do tenant (já filtrado pelo BelongsToTenant)
 
-        $freights = $query->latest()->paginate(15);
+        if (request()->filled('deadline_from')) {
+            $query->where('deadline_at', '>=', request('deadline_from'));
+        }
+
+        if (request()->filled('deadline_to')) {
+            $query->where('deadline_at', '<=', request('deadline_to'));
+        }
+
+        // ─── Filtros avançados ────────────────────────────────
+        if (request()->filled('status')) {
+            $query->whereIn('status', (array) request('status'));
+        }
+
+        if (request()->filled('cargo_type')) {
+            $query->whereIn('cargo_type', (array) request('cargo_type'));
+        }
+
+        if (request()->filled('driver_id')) {
+            $query->where('driver_id', request('driver_id'));
+        }
+
+        if (request()->filled('origin_state')) {
+            $query->where('origin_state', request('origin_state'));
+        }
+
+        if (request()->filled('destination_state')) {
+            $query->where('destination_state', request('destination_state'));
+        }
+
+        if (request()->filled('search')) {
+            $search = request('search');
+            $query->where(function ($inner) use ($search) {
+                $inner->where('cargo_name', 'ilike', "%{$search}%")
+                    ->orWhere('origin_address', 'ilike', "%{$search}%")
+                    ->orWhere('destination_address', 'ilike', "%{$search}%")
+                    ->orWhere('origin_city', 'ilike', "%{$search}%")
+                    ->orWhere('destination_city', 'ilike', "%{$search}%");
+            });
+        }
+
+        $sort = request('sort', 'latest');
+        match ($sort) {
+            'deadline'  => $query->orderBy('deadline_at'),
+            'price'     => $query->orderByDesc('total_price'),
+            'oldest'    => $query->oldest(),
+            default     => $query->latest(),
+        };
+
+        $perPage = min((int) request('per_page', 15), 100);
+
+        $freights = $query->paginate($perPage)->withQueryString();
 
         return FreightResource::collection($freights);
     }

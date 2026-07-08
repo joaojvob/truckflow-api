@@ -3,10 +3,13 @@
 namespace App\Providers;
 
 use App\Contracts\FiscalDocumentProvider;
+use App\Contracts\GeocodingProvider;
 use App\Contracts\RoutingProvider;
+use App\Services\Geocoding\BrasilApiGeocodingProvider;
 use App\Services\GoogleMapsService;
 use App\Services\JavaFiscalDocumentProvider;
 use App\Services\JavaGeoRoutingProvider;
+use App\Services\Routing\HaversineRoutingProvider;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\OpenApi;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
@@ -24,8 +27,15 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(RoutingProvider::class, function () {
             return match (config('services.geo.driver')) {
-                'java'  => $this->app->make(JavaGeoRoutingProvider::class),
-                default => $this->app->make(GoogleMapsService::class),
+                'java'        => $this->app->make(JavaGeoRoutingProvider::class),
+                'google_maps' => $this->app->make(GoogleMapsService::class),
+                default       => $this->app->make(HaversineRoutingProvider::class),
+            };
+        });
+
+        $this->app->bind(GeocodingProvider::class, function () {
+            return match (config('services.geocoding.driver')) {
+                default => $this->app->make(BrasilApiGeocodingProvider::class),
             };
         });
 
