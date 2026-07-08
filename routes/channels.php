@@ -5,7 +5,11 @@ use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('tenant.{tenantId}.freight.{freightId}', function (User $user, int $tenantId, int $freightId) {
-    if ($user->tenant_id !== $tenantId) {
+    $userTenantId = $user->isSuperAdmin()
+        ? (request()->header('X-Tenant-Id') ? (int) request()->header('X-Tenant-Id') : null)
+        : $user->tenant_id;
+
+    if ($userTenantId !== $tenantId) {
         return false;
     }
 
