@@ -9,7 +9,7 @@ Backend SaaS multi-tenant construído com Laravel 12 e PostgreSQL + PostGIS. **A
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-336791?logo=postgresql&logoColor=white)
 ![PostGIS](https://img.shields.io/badge/PostGIS-3.5-4E9A06)
 ![CI](https://github.com/joaojvob/truckflow-api/actions/workflows/ci.yml/badge.svg)
-![Tests](https://img.shields.io/badge/Tests-115%2B-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-131-brightgreen)
 ![PHPStan](https://img.shields.io/badge/PHPStan-level%205-blue)
 ![MVP](https://img.shields.io/badge/MVP%20Backend-Concluído-success)
 ![API v2](https://img.shields.io/badge/API%20v2-Concluído-success)
@@ -43,7 +43,7 @@ Backend SaaS multi-tenant construído com Laravel 12 e PostgreSQL + PostGIS. **A
 | Fase | Status | Descrição |
 |------|--------|-----------|
 | **MVP Backend** | ✅ Concluído | API REST funcional, testada e containerizada |
-| **Frontend Web** | 🔜 Repositório separado | Painel do gestor/admin |
+| **Frontend Web** | 🚧 Em progresso | [truckflow-web](https://github.com/joaojvob/truckflow-web) — painel admin/gestor/motorista |
 | **App Mobile** | 🔜 Repositório separado | App do motorista |
 | **API v2** | ✅ Concluído | Places, GPS em tempo real, WebSocket (Reverb), relatórios |
 | **Observabilidade** | ✅ Concluído | System logs, telemetria admin, PHPStan + Pint no CI |
@@ -69,7 +69,7 @@ O **TruckFlow** é uma plataforma SaaS para transportadoras gerenciarem:
 
 | Cliente | Usuário | Função na API |
 |---------|---------|---------------|
-| **Web** (repo separado) | Administrador / Gestor | Cria empresa, cadastra motoristas, fretes, rotas, aprova documentos |
+| **Web** ([truckflow-web](https://github.com/joaojvob/truckflow-web)) | Super Admin / Admin / Gestor / Motorista | Gestão de frota, fretes, mapas, workflow e portal do motorista |
 | **Mobile** (repo separado) | Motorista | Onboarding, aceita/recusa fretes, doping, checklist, check-in em waypoints, SOS |
 
 ---
@@ -937,7 +937,7 @@ Os testes de feature usam **`DatabaseTransactions`** no `TestCase` base: cada te
 ### Resultado Atual
 
 ```
-✓ 115+ testes passando
+✓ 131 testes passando
 ✓ Duração: ~6s
 ```
 
@@ -1015,7 +1015,7 @@ O CI (GitHub Actions) executa Pint, PHPStan e testes em jobs separados.
 - [x] Waypoints, `enforce_route`, check-in/check-out e reorder
 - [x] Google Directions API (polyline + distância)
 - [x] CI (GitHub Actions) + Docker produção + rate limiting por tenant
-- [x] 115+ testes automatizados
+- [x] 131 testes automatizados
 - [x] Repositório API-only (sem assets de frontend)
 - [x] Google Places API (busca de postos, restaurantes, etc.)
 - [x] Tracking GPS em tempo real com broadcast WebSocket
@@ -1038,7 +1038,7 @@ O CI (GitHub Actions) executa Pint, PHPStan e testes em jobs separados.
 
 ### 🔜 Clientes (repositórios separados)
 
-- [ ] **Painel Web** — Gestão de frota, fretes e mapas
+- [x] **Painel Web** — Gestão de frota, fretes, mapas, super admin e portal do motorista ([truckflow-web](https://github.com/joaojvob/truckflow-web))
 - [ ] **App Mobile** — Motorista em campo (GPS, checklist, SOS)
 
 ---
