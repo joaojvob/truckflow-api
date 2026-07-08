@@ -19,6 +19,8 @@ class WaypointResource extends JsonResource
             'type_label'  => $this->type->label(),
             'type_icon'   => $this->type->icon(),
             'address'     => $this->address,
+            'lat'         => $this->getCoordinates()['lat'] ?? null,
+            'lng'         => $this->getCoordinates()['lng'] ?? null,
 
             'order'                  => $this->order,
             'mandatory'              => $this->mandatory,
