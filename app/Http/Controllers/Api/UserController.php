@@ -15,6 +15,8 @@ class UserController extends Controller
      */
     public function index(): AnonymousResourceCollection
     {
+        abort_unless(auth()->user()->isAdmin() || auth()->user()->isManager(), 403, 'Acesso restrito.');
+
         $users = User::with(['driverProfile'])
             ->latest()
             ->paginate(15);
@@ -27,6 +29,8 @@ class UserController extends Controller
      */
     public function show(User $user): JsonResponse
     {
+        abort_unless(auth()->user()->isAdmin() || auth()->user()->isManager(), 403, 'Acesso restrito.');
+
         $user->load(['driverProfile', 'trucks', 'trailers']);
 
         return response()->json([
@@ -39,6 +43,7 @@ class UserController extends Controller
      */
     public function updateRole(User $user): JsonResponse
     {
+        abort_unless(auth()->user()->isAdmin(), 403, 'Acesso restrito a administradores.');
         $validated = request()->validate([
             'role' => ['required', 'string', 'in:admin,manager,driver'],
         ]);

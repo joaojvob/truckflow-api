@@ -185,7 +185,7 @@ class FreightWorkflowTest extends TestCase
 
         $response = $this->postJson("/api/v1/freights/{$freight->id}/doping/{$dopingTest->id}/review", [
             'approved' => true,
-            'notes'    => 'Tudo em ordem.',
+            'notes'    => 'Tudo certo',
         ]);
 
         $response->assertOk()
@@ -202,6 +202,32 @@ class FreightWorkflowTest extends TestCase
         ]);
 
         Notification::assertSentTo($this->driver, \App\Notifications\DopingTestReviewed::class);
+    }
+
+    public function test_manager_can_download_doping_file(): void
+    {
+        Storage::fake('private');
+        Storage::disk('private')->put('doping-tests/test.pdf', 'conteudo-fake-pdf');
+
+        Sanctum::actingAs($this->manager);
+
+        $freight = Freight::factory()->accepted()->create([
+            'tenant_id'  => $this->tenant->id,
+            'driver_id'  => $this->driver->id,
+            'created_by' => $this->manager->id,
+        ]);
+
+        $dopingTest = DopingTest::create([
+            'tenant_id'  => $this->tenant->id,
+            'freight_id' => $freight->id,
+            'driver_id'  => $this->driver->id,
+            'file_path'  => 'doping-tests/test.pdf',
+            'status'     => DopingStatus::Pending,
+        ]);
+
+        $this->get("/api/v1/freights/{$freight->id}/doping/{$dopingTest->id}/file")
+            ->assertOk()
+            ->assertDownload("doping-frete-{$freight->id}-{$dopingTest->id}.pdf");
     }
 
     // ─── Checklist ────────────────────────────────────────────

@@ -85,6 +85,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'tenant.context'])->group(funct
         Route::post('/accept', [FreightWorkflowController::class, 'accept']);
         Route::post('/reject', [FreightWorkflowController::class, 'reject']);
         Route::post('/doping', [FreightWorkflowController::class, 'submitDoping']);
+        Route::get('/doping/{dopingTest}/file', [FreightWorkflowController::class, 'downloadDoping']);
         Route::post('/doping/{dopingTest}/review', [FreightWorkflowController::class, 'reviewDoping']);
         Route::post('/checklist', [FreightWorkflowController::class, 'submitChecklist']);
         Route::post('/approve', [FreightWorkflowController::class, 'approve']);

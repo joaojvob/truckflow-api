@@ -8,17 +8,21 @@ use App\Http\Requests\RejectFreightRequest;
 use App\Http\Requests\ReviewDopingTestRequest;
 use App\Http\Requests\SubmitChecklistRequest;
 use App\Http\Requests\SubmitDopingTestRequest;
+use App\Http\Resources\DopingTestResource;
 use App\Http\Resources\FreightResource;
 use App\Models\DopingTest;
 use App\Models\Freight;
 use App\Models\User;
+use App\Services\DocumentStorageService;
 use App\Services\FreightWorkflowService;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FreightWorkflowController extends Controller
 {
     public function __construct(
         protected FreightWorkflowService $workflowService,
+        protected DocumentStorageService $documentStorage,
     ) {}
 
     /**
@@ -87,9 +91,27 @@ class FreightWorkflowController extends Controller
         $dopingTest = $this->workflowService->submitDopingTest($freight, $filePath);
 
         return response()->json([
-            'data'    => $dopingTest,
+            'data'    => DopingTestResource::make($dopingTest),
             'message' => 'Exame de doping enviado com sucesso!',
         ], 201);
+    }
+
+    /**
+     * Download/visualização do comprovante de doping.
+     * GET /freights/{freight}/doping/{dopingTest}/file
+     */
+    public function downloadDoping(Freight $freight, DopingTest $dopingTest): StreamedResponse
+    {
+        $this->authorize('view', $freight);
+
+        abort_unless($dopingTest->freight_id === $freight->id, 404, 'Exame de doping não encontrado.');
+
+        $extension = pathinfo($dopingTest->file_path, PATHINFO_EXTENSION) ?: 'pdf';
+
+        return $this->documentStorage->download(
+            $dopingTest->file_path,
+            "doping-frete-{$freight->id}-{$dopingTest->id}.{$extension}",
+        );
     }
 
     /**
@@ -107,7 +129,7 @@ class FreightWorkflowController extends Controller
         );
 
         return response()->json([
-            'data'    => $dopingTest,
+            'data'    => DopingTestResource::make($dopingTest),
             'message' => $dopingTest->isApproved() ? 'Doping aprovado!' : 'Doping reprovado.',
         ]);
     }

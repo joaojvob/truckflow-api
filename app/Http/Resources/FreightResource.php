@@ -105,7 +105,7 @@ class FreightResource extends JsonResource
             'trailer'      => TrailerResource::make($this->whenLoaded('trailer')),
             'checklists'   => ChecklistResource::collection($this->whenLoaded('checklists')),
             'incidents'    => IncidentResource::collection($this->whenLoaded('incidents')),
-            'doping_tests' => $this->whenLoaded('dopingTests'),
+            'doping_tests' => DopingTestResource::collection($this->whenLoaded('dopingTests')),
             'waypoints'    => WaypointResource::collection($this->whenLoaded('waypoints')),
         ];
     }
