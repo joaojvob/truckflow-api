@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\TruckStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateTruckRequest extends FormRequest
 {
@@ -26,6 +28,7 @@ class UpdateTruckRequest extends FormRequest
             'hitch_type'        => ['nullable', 'string', 'in:fifth_wheel,pintle,drawbar'],
             'odometer'          => ['sometimes', 'integer', 'min:0'],
             'driver_id'         => ['nullable', 'exists:users,id'],
+            'status'            => ['sometimes', new Enum(TruckStatus::class)],
         ];
     }
 }

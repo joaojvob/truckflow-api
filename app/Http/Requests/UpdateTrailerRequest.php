@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\TrailerType;
+use App\Enums\TruckStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -27,6 +28,8 @@ class UpdateTrailerRequest extends FormRequest
             'length'     => ['nullable', 'numeric', 'min:0'],
             'hitch_type' => ['sometimes', 'string', 'in:fifth_wheel,pintle,drawbar'],
             'driver_id'  => ['nullable', 'exists:users,id'],
+            'status'     => ['sometimes', new Enum(TruckStatus::class)],
+            'is_loaded'  => ['sometimes', 'boolean'],
         ];
     }
 }
